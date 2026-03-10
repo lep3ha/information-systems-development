@@ -1,0 +1,47 @@
+{% extends "base/base.html" %}
+
+{% block title %}Отчёты{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6">
+        <h4>Отчёты о продажах</h4>
+        <a href="{{ url_for('analytics.create_sales') }}" class="btn btn-sm btn-primary mb-2">Создать отчёт о продажах</a>
+        <ul class="list-group">
+            {% for r in sales %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                {{ r.month }} / {{ r.year }}
+                <span>
+                    <a href="{{ url_for('analytics.view_sales', report_id=r.id) }}" class="btn btn-sm btn-outline-secondary me-2">Просмотр</a>
+                    <form method="POST" action="{{ url_for('analytics.delete_sales', report_id=r.id) }}" class="d-inline">
+                        <button class="btn btn-sm btn-danger">Удалить</button>
+                    </form>
+                </span>
+            </li>
+            {% else %}
+            <li class="list-group-item">Нет отчётов</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="col-md-6">
+        <h4>Отчёты о поставках</h4>
+        <a href="{{ url_for('analytics.create_purchases') }}" class="btn btn-sm btn-primary mb-2">Создать отчёт о поставках</a>
+        <ul class="list-group">
+            {% for r in purchases %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                {{ r.month }} / {{ r.year }}
+                <span>
+                    <a href="{{ url_for('analytics.view_purchases', report_id=r.id) }}" class="btn btn-sm btn-outline-secondary me-2">Просмотр</a>
+                    <form method="POST" action="{{ url_for('analytics.delete_purchases', report_id=r.id) }}" class="d-inline">
+                        <button class="btn btn-sm btn-danger">Удалить</button>
+                    </form>
+                </span>
+            </li>
+            {% else %}
+            <li class="list-group-item">Нет отчётов</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+{% endblock %}

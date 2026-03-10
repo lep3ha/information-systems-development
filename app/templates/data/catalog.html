@@ -1,0 +1,119 @@
+{% extends "base/base.html" %}
+
+{% block title %}Каталог{% endblock %}
+
+{% block content %}
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-4">
+        <!-- Заголовок -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h3 class="mb-1">Каталог заготовок</h3>
+                <p class="text-muted small mb-0">Фильтрация и поиск по материалам и ценам</p>
+            </div>
+            <a href="{{ url_for('data.index') }}" class="btn btn-outline-primary">
+                <i class="bi bi-arrow-left me-1"></i>Назад
+            </a>
+        </div>
+
+        <!-- Форма фильтрации -->
+        <div class="card border-light mb-4">
+            <div class="card-body bg-light-subtle p-3">
+                <form method="POST" class="row g-3 align-items-end">
+                    <div class="col-lg-2 col-md-4">
+                        <label class="form-label small fw-semibold">{{ form.category.label }}</label>
+                        {{ form.category(class="form-select form-select-sm border") }}
+                    </div>
+                    <div class="col-lg-2 col-md-4">
+                        <label class="form-label small fw-semibold">{{ form.min_price.label }}</label>
+                        <div class="input-group input-group-sm">
+                            {{ form.min_price(class="form-control border", placeholder="0") }}
+                            <span class="input-group-text bg-white">₽</span>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-4">
+                        <label class="form-label small fw-semibold">{{ form.max_price.label }}</label>
+                        <div class="input-group input-group-sm">
+                            {{ form.max_price(class="form-control border", placeholder="100000") }}
+                            <span class="input-group-text bg-white">₽</span>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-4">
+                        <label class="form-label small fw-semibold">{{ form.sort_by.label }}</label>
+                        {{ form.sort_by(class="form-select form-select-sm border") }}
+                    </div>
+                    <div class="col-lg-2 col-md-4">
+                        {{ form.submit(class="btn btn-primary w-100") }}
+                    </div>
+                    <div class="col-lg-2 col-md-4">
+                        <a href="{{ url_for('data.catalog') }}" class="btn btn-outline-secondary w-100">
+                            <i class="bi bi-x-circle me-1"></i>Сбросить
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Результаты -->
+        {% if items %}
+            <div class="border rounded">
+                <div class="table-responsive">
+                    <table class="table table-hover table-sm mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                {% for column in columns %}
+                                    <th class="small fw-semibold py-3 border-bottom">
+                                        {{ column|replace('_', ' ')|title }}
+                                    </th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in items %}
+                                <tr class="border-bottom">
+                                    {% for column in columns %}
+                                        <td class="py-2">
+                                            {% if column in ['price'] and item[column] %}
+                                                <span class="badge bg-success-subtle text-success">
+                                                    {{ "%.2f"|format(item[column]) }} ₽
+                                                </span>
+                                            {% elif column in ['quantity'] and item[column] %}
+                                                <span class="badge bg-info-subtle text-info">
+                                                    {{ item[column] }} шт.
+                                                </span>
+                                            {% elif column in ['weight'] and item[column] %}
+                                                <span class="text-muted">{{ "%.3f"|format(item[column]) }} кг</span>
+                                            {% else %}
+                                                {{ item[column] or '-' }}
+                                            {% endif %}
+                                        </td>
+                                    {% endfor %}
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="p-3 bg-light-subtle border-top">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">
+                            <i class="bi bi-list-check me-1"></i>
+                            Найдено записей: <strong>{{ items|length }}</strong>
+                        </small>
+                        {% if items|length > 0 %}
+                            <small class="text-muted">
+                                Последнее обновление: {{ items[0].get('last_update', '')|default('', true) }}
+                            </small>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="text-center py-5">
+                <i class="bi bi-search display-1 text-muted opacity-50 mb-3"></i>
+                <h5 class="text-muted mb-2">Нет данных для отображения</h5>
+                <p class="text-muted small">Измените параметры фильтрации или нажмите "Сбросить"</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

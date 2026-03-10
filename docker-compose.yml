@@ -1,0 +1,20 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: market_web
+    image: market_web:latest
+    # load env from project db config (contains POSTGRES_* values)
+    env_file: app/db/.env
+    environment:
+      # When Postgres runs outside the compose network on macOS,
+      # use host.docker.internal so the container can reach the host
+      - POSTGRES_HOST=host.docker.internal
+    ports:
+      - "5005:5000"
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: gunicorn -w 4 -b 0.0.0.0:5000 run:app
+    restart: unless-stopped

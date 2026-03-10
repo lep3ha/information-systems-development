@@ -1,0 +1,130 @@
+{% extends "base/base.html" %}
+
+{% block title %}Поставщики{% endblock %}
+
+{% block content %}
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-4">
+        <!-- Заголовок -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h3 class="mb-1">Поставщики</h3>
+                <p class="text-muted small mb-0">Фильтрация и поиск поставщиков</p>
+            </div>
+            <a href="{{ url_for('data.index') }}" class="btn btn-outline-primary">
+                <i class="bi bi-arrow-left me-1"></i>Назад
+            </a>
+        </div>
+
+        <!-- Форма фильтрации -->
+        <div class="card border-light mb-4">
+            <div class="card-body bg-light-subtle p-3">
+                <form method="POST" class="row g-3 align-items-end">
+                    <div class="col-lg-2 col-md-4">
+                        <label class="form-label small fw-semibold">{{ form.city.label }}</label>
+                        {{ form.city(class="form-select form-select-sm border") }}
+                    </div>
+                    <div class="col-lg-2 col-md-4">
+                        <label class="form-label small fw-semibold">{{ form.min_contract_date.label }}</label>
+                        {{ form.min_contract_date(class="form-control form-control-sm border", type="date") }}
+                    </div>
+                    <div class="col-lg-2 col-md-4">
+                        <label class="form-label small fw-semibold">{{ form.max_contract_date.label }}</label>
+                        {{ form.max_contract_date(class="form-control form-control-sm border", type="date") }}
+                    </div>
+                    <div class="col-lg-2 col-md-4">
+                        <label class="form-label small fw-semibold">{{ form.sort_by.label }}</label>
+                        {{ form.sort_by(class="form-select form-select-sm border") }}
+                    </div>
+                    <div class="col-lg-2 col-md-4">
+                        {{ form.submit(class="btn btn-primary w-100") }}
+                    </div>
+                    <div class="col-lg-2 col-md-4">
+                        <a href="{{ url_for('data.suppliers') }}" class="btn btn-outline-secondary w-100">
+                            <i class="bi bi-x-circle me-1"></i>Сбросить
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Результаты -->
+        {% if suppliers %}
+            <div class="border rounded">
+                <div class="table-responsive">
+                    <table class="table table-hover table-sm mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                {% for column in columns %}
+                                    <th class="small fw-semibold py-3 border-bottom">
+                                        {{ column|replace('_', ' ')|title }}
+                                    </th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for supplier in suppliers %}
+                                <tr class="border-bottom">
+                                    {% for column in columns %}
+                                        <td class="py-2">
+                                            {% if column == 'ID' %}
+                                                <span class="badge bg-secondary-subtle text-secondary">{{ supplier[column] }}</span>
+                                            {% elif column == 'Город' %}
+                                                {% if supplier[column] %}
+                                                    <span class="text-muted">{{ supplier[column] }}</span>
+                                                {% else %}
+                                                    <span class="text-muted">-</span>
+                                                {% endif %}
+                                            {% elif column == 'Дата контракта' %}
+                                                <span class="text-muted">{{ supplier[column].strftime('%d.%m.%Y') if supplier[column] else '-' }}</span>
+                                            {% elif column == 'Кол-во поставок' %}
+                                                {% if supplier[column] > 0 %}
+                                                    <span class="text-muted">{{ supplier[column] }}</span>
+                                                {% else %}
+                                                    <span class="text-muted">0</span>
+                                                {% endif %}
+                                            {% elif column == 'Общая сумма поставок' %}
+                                                {% if supplier[column] > 0 %}
+                                                    <span class="badge bg-success-subtle text-success">
+                                                        {{ "%.2f"|format(supplier[column]) }} ₽
+                                                    </span>
+                                                {% else %}
+                                                    <span class="text-muted">-</span>
+                                                {% endif %}
+                                            {% else %}
+                                                {{ supplier[column] or '-' }}
+                                            {% endif %}
+                                        </td>
+                                    {% endfor %}
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="p-3 bg-light-subtle border-top">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">
+                            <i class="bi bi-building me-1"></i>
+                            Найдено поставщиков: <strong>{{ suppliers|length }}</strong>
+                        </small>
+                        {% if suppliers|length > 0 %}
+                            <small class="text-muted">
+                                {% set total_invoices = suppliers|sum(attribute='Общая сумма поставок') %}
+                                {% set total_suppliers = suppliers|sum(attribute='Кол-во поставок') %}
+                                Общая сумма поставок: <strong>{{ "%.2f"|format(total_invoices) }} ₽</strong>
+                                | Всего поставок: <strong>{{ total_suppliers }}</strong>
+                            </small>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="text-center py-5">
+                <i class="bi bi-building display-1 text-muted opacity-50 mb-3"></i>
+                <h5 class="text-muted mb-2">Нет данных для отображения</h5>
+                <p class="text-muted small">Измените параметры фильтрации или нажмите "Сбросить"</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

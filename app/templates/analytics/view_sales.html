@@ -1,0 +1,34 @@
+{% extends "base/base.html" %}
+
+{% block title %}Отчёт о продажах{% endblock %}
+
+{% block content %}
+<h3>Отчёт о продажах</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Пользователь</th>
+            <th>Время</th>
+            <th>Сумма</th>
+            <th>Состав</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for r in rows %}
+        <tr>
+            <td>{{ r.user_id }}</td>
+            <td>{{ r.order_date }}</td>
+            <td>{{ '%.2f'|format(r.total_cost) }}</td>
+            <td>
+                <ul class="list-unstyled mb-0">
+                {% for it in r['items'] %}
+                    <li>Товар {{ it['product_id'] }} — {{ it['quantity'] }} шт. по {{ '%.2f'|format(it['price']) }} руб.</li>
+                {% endfor %}
+                </ul>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

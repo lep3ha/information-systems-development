@@ -1,0 +1,65 @@
+{% extends "base/base.html" %}
+
+{% block title %}403 - Доступ запрещён{% endblock %}
+
+{% block content %}
+<div class="container d-flex align-items-center justify-content-center" style="min-height: 70vh;">
+    <div class="row w-100">
+        <div class="col-lg-6 mx-auto text-center">
+            <!-- Error Code -->
+            <div style="margin-bottom: 30px;">
+                <h1 style="font-size: 120px; font-weight: 700; color: #dc3545; margin: 0; line-height: 1;">
+                    403
+                </h1>
+                <p style="font-size: 18px; color: #6c757d; margin-top: 10px;">
+                    Доступ запрещён
+                </p>
+            </div>
+
+            <!-- Error Message -->
+            <div class="card border-0 shadow-sm p-4" style="background: #fff5f5;">
+                <h3 class="card-title mb-3" style="color: #dc3545;">
+                    <i class="bi bi-shield-exclamation"></i> У вас нет прав доступа
+                </h3>
+                <p class="card-text mb-4" style="color: #555; font-size: 16px;">
+                    К сожалению, вы не имеете разрешения для доступа к этому ресурсу. 
+                    Если вы считаете, что это ошибка, пожалуйста, обратитесь к администратору.
+                </p>
+
+                <!-- Action Buttons -->
+                <div class="d-flex gap-2 justify-content-center flex-wrap">
+                    <a href="/" class="btn btn-primary px-4">
+                        <i class="bi bi-house"></i> На главную
+                    </a>
+                    <button onclick="history.back()" class="btn btn-outline-secondary px-4">
+                        <i class="bi bi-arrow-left"></i> Назад
+                    </button>
+                </div>
+            </div>
+
+            <!-- Additional Info -->
+            <div class="mt-5 text-muted" style="font-size: 14px;">
+                <p>
+                    <i class="bi bi-info-circle"></i> 
+                    Код ошибки: <code style="background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">403 Forbidden</code>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    body {
+        background: linear-gradient(135deg, #f2f4f7 0%, #e8eaed 100%);
+    }
+
+    .card {
+        border-left: 5px solid #dc3545;
+    }
+
+    code {
+        font-family: 'Courier New', monospace;
+        font-size: 12px;
+    }
+</style>
+{% endblock %}

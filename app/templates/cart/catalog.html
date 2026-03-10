@@ -1,0 +1,30 @@
+{% extends "base/base.html" %}
+
+{% block title %}Каталог{% endblock %}
+
+{% block content %}
+<div class="row">
+    {% for item in items %}
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">{{ item.name }}</h5>
+                <p class="card-text">Артикул: {{ item.sku }}</p>
+                <p class="card-text">Категория: {{ item.category }}</p>
+                <p class="card-text">В наличии: {{ item.quantity }}</p>
+                <p class="card-text">Цена: {{ '%.2f'|format(item.price) }} руб.</p>
+
+                <form method="POST" action="{{ url_for('cart.add_to_cart') }}">
+                    <input type="hidden" name="product_id" value="{{ item.id }}">
+                    <input type="hidden" name="price_at_add" value="{{ item.purchase_price }}">
+                    <div class="input-group mb-2">
+                        <input type="number" name="quantity" class="form-control" min="1" value="1">
+                        <button class="btn btn-primary" type="submit">Добавить в корзину</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
