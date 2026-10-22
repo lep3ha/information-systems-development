@@ -1,0 +1,6 @@
+interface:
+  display_name: "Согласование решений"
+  short_description: "Запрашивать решение владельца при любых вопросах"
+  default_prompt: "Используй $request-human-decision, чтобы обсудить со мной возникшие вопросы до выполнения зависящих от них действий."
+policy:
+  allow_implicit_invocation: true
