@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Supermarket</title>
+</head>
+<body>
+
+<h2>{{prod_title}}</h2>
+<table style="border: 1px solid #000000; border-collapse: collapse;">
+    <tr>
+        <td>Название</td>
+        <td>Единица измерения</td>
+        <td>Стоимость</td>
+    </tr>
+
+    {% for prod in product %}
+        <tr>
+            <td> {{ prod['prod_name'] }} </td>
+            <td> {{ prod['prod_measure'] }}</td>
+            <td> {{ prod['prod_price'] }}</td>
+        </tr>
+    {%endfor%}
+</table>
+
+</body>
+</html>
