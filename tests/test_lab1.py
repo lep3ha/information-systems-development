@@ -34,7 +34,7 @@ class ApplicationTests(unittest.TestCase):
                 self.assertIn(text, response.get_data(as_text=True))
         self.assertEqual(self.client.get("/query/unknown").status_code, 404)
 
-    @patch("app.query_bp.model_route.select_dict")
+    @patch("app.query_bp.model_route.select_list")
     def test_invalid_parameters_do_not_reach_database(self, select):
         cases = [
             ("products", {}),
@@ -55,13 +55,13 @@ class ApplicationTests(unittest.TestCase):
                 self.assertIn('role="alert"', response.get_data(as_text=True))
         select.assert_not_called()
 
-    @patch("app.query_bp.model_route.select_dict", return_value=[])
+    @patch("app.query_bp.model_route.select_list", return_value=[])
     def test_empty_result_is_success(self, select):
         response = self.client.post("/query/products", data={"category_id": "4"})
         self.assertEqual(response.status_code, 200)
         self.assertIn("Ничего не найдено", response.get_data(as_text=True))
 
-    @patch("app.query_bp.model_route.select_dict", return_value=[])
+    @patch("app.query_bp.model_route.select_list", return_value=[])
     def test_city_is_passed_as_a_parameter(self, select):
         city = "Москва' OR 1=1 --"
         self.client.post("/query/suppliers", data={"city": city})
@@ -69,7 +69,7 @@ class ApplicationTests(unittest.TestCase):
         self.assertNotIn(city, sql)
         self.assertEqual(params, {"city": city})
 
-    @patch("app.query_bp.model_route.select_dict", return_value=[])
+    @patch("app.query_bp.model_route.select_list", return_value=[])
     def test_period_parameters_are_validated_dates(self, select):
         response = self.client.post("/query/deliveries", data={
             "supplier_id": "1", "start_date": "2026-10-01", "end_date": "2026-10-31",
@@ -79,7 +79,7 @@ class ApplicationTests(unittest.TestCase):
             "supplier_id": 1, "start_date": date(2026, 10, 1), "end_date": date(2026, 10, 31),
         })
 
-    @patch("app.query_bp.model_route.select_dict")
+    @patch("app.query_bp.model_route.select_list")
     def test_results_are_rendered_and_escaped(self, select):
         cases = (
             ("products", {"category_id": "1"}, [{"id": 1, "name": "<script>milk</script>", "category": "Молочные"}], "&lt;script&gt;milk&lt;/script&gt;"),
@@ -96,7 +96,7 @@ class ApplicationTests(unittest.TestCase):
                 self.assertNotIn("<script>", html)
                 self.assertIn("Повторить запрос", html)
 
-    @patch("app.query_bp.model_route.select_dict", side_effect=OperationalError("PRIVATE DATABASE DETAILS"))
+    @patch("app.query_bp.model_route.select_list", side_effect=OperationalError("PRIVATE DATABASE DETAILS"))
     def test_database_failure_keeps_values_and_hides_details(self, select):
         with self.assertLogs(app.logger, level="ERROR") as logs:
             response = self.client.post("/query/suppliers", data={"city": "Москва"})
@@ -106,7 +106,7 @@ class ApplicationTests(unittest.TestCase):
         self.assertNotIn("PRIVATE DATABASE DETAILS", html)
         self.assertIn("PRIVATE DATABASE DETAILS", "\n".join(logs.output))
 
-    @patch("app.query_bp.model_route.select_dict")
+    @patch("app.query_bp.model_route.select_list")
     def test_missing_database_config_is_service_unavailable(self, select):
         app.config.pop("db_config")
         with self.assertLogs(app.logger, level="ERROR"):

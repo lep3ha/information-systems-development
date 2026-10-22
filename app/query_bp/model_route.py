@@ -4,7 +4,7 @@ from datetime import date
 from flask import current_app
 from psycopg2 import Error
 
-from app.db.select import select_dict
+from app.db.select import select_list
 
 
 QUERIES = {
@@ -84,7 +84,7 @@ def model_route(provider, query_name, values):
         current_app.logger.error("Не загружен файл app/data/db_config.json")
         return ResultInfo([], False, "База данных недоступна. Попробуйте позже.", 503)
     try:
-        rows = select_dict(provider.get(QUERIES[query_name]["sql"]), params)
+        rows = select_list(provider.get(QUERIES[query_name]["sql"]), params)
     except Error:
         current_app.logger.exception("Ошибка выполнения запроса %s", query_name)
         return ResultInfo([], False, "База данных недоступна. Попробуйте позже.", 503)
