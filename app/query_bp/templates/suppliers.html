@@ -1,0 +1,8 @@
+{% extends "query_form.html" %}
+{% block fields %}
+<p>
+    <label for="city">Город</label>
+    <input type="text" id="city" name="city" maxlength="100"
+           value="{{ values.get('city', '') }}" required>
+</p>
+{% endblock %}

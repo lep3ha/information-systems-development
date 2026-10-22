@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Результат запроса — Супермаркет{% endblock %}
+{% block content %}
+<h1>{{ query.title }}</h1>
+{% if rows %}
+<table>
+    <thead>
+        <tr>{% for key, title in query.columns %}<th scope="col">{{ title }}</th>{% endfor %}</tr>
+    </thead>
+    <tbody>
+        {% for row in rows %}
+        <tr>
+            {% for key, title in query.columns %}
+            <td>{% if row[key] is none %}—{% else %}{{ row[key] }}{% endif %}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>Ничего не найдено</p>
+{% endif %}
+<p><a href="{{ url_for('query_bp.query_handler', query_name=query_name) }}">Повторить запрос</a></p>
+<p><a href="{{ url_for('query_bp.query_menu_handler') }}">Вернуться в меню запросов</a></p>
+<p><a href="{{ url_for('main_menu') }}">Вернуться в главное меню</a></p>
+{% endblock %}

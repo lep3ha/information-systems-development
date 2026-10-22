@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}{{ query.title }} — Супермаркет{% endblock %}
+{% block content %}
+<h1>{{ query.title }}</h1>
+{% if error %}<p role="alert">{{ error }}</p>{% endif %}
+<form method="post" action="{{ url_for('query_bp.query_handler', query_name=query_name) }}">
+    {% block fields %}{% endblock %}
+    <button type="submit">Выполнить запрос</button>
+</form>
+<p><a href="{{ url_for('query_bp.query_menu_handler') }}">Вернуться в меню запросов</a></p>
+<p><a href="{{ url_for('main_menu') }}">Вернуться в главное меню</a></p>
+{% endblock %}

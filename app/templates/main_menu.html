@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Главное меню — Супермаркет{% endblock %}
+{% block content %}
+<h1>Супермаркет</h1>
+<h2>Главное меню</h2>
+<ul>
+    <li><a href="{{ url_for('query_bp.query_menu_handler') }}">Работа с запросами</a></li>
+    <li><a href="{{ url_for('exit_func') }}">Закончить работу</a></li>
+</ul>
+{% endblock %}

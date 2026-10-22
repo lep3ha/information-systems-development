@@ -1,0 +1,8 @@
+{
+    "host": "localhost",
+    "port": 5432,
+    "dbname": "supermarket",
+    "user": "supermarket",
+    "password": "replace-with-your-password",
+    "connect_timeout": 5
+}

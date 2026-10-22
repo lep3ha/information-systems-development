@@ -1,0 +1,19 @@
+{% extends "query_form.html" %}
+{% block fields %}
+<p>
+    <label for="supplier_id">Код поставщика</label>
+    <input type="number" id="supplier_id" name="supplier_id" min="1" max="2147483647"
+           step="1" value="{{ values.get('supplier_id', '') }}" required>
+</p>
+<p>
+    <label for="start_date">Начальная дата</label>
+    <input type="date" id="start_date" name="start_date"
+           value="{{ values.get('start_date', '') }}" required>
+</p>
+<p>
+    <label for="end_date">Конечная дата</label>
+    <input type="date" id="end_date" name="end_date"
+           value="{{ values.get('end_date', '') }}" required>
+</p>
+<p>Обе даты включаются целиком. Время поставок учитывается по Москве.</p>
+{% endblock %}

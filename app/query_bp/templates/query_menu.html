@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Меню запросов — Супермаркет{% endblock %}
+{% block content %}
+<h1>Меню запросов</h1>
+<ul>
+    {% for query_name, query in queries.items() %}
+    <li><a href="{{ url_for('query_bp.query_handler', query_name=query_name) }}">{{ query.title }}</a></li>
+    {% endfor %}
+</ul>
+<a href="{{ url_for('main_menu') }}">Вернуться в главное меню</a>
+{% endblock %}

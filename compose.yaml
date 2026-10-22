@@ -1,0 +1,27 @@
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: supermarket
+      POSTGRES_USER: supermarket
+      POSTGRES_PASSWORD: supermarket
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./app/db/db_data/tables.sql:/docker-entrypoint-initdb.d/01-tables.sql:ro
+      - ./app/db/db_data/input_data.sql:/docker-entrypoint-initdb.d/02-input_data.sql:ro
+    healthcheck:
+      test: ["CMD", "pg_isready", "-h", "127.0.0.1", "-U", "supermarket", "-d", "supermarket"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+
+  web:
+    build: .
+    ports:
+      - "127.0.0.1:5000:5000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
