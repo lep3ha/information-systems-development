@@ -1,0 +1,6 @@
+{
+        "host": "127.0.0.1",
+        "database": "supermarket",
+        "user": "postgres",
+        "password": "220506"
+}
