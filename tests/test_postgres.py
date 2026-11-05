@@ -28,7 +28,7 @@ class PostgreSQLTests(unittest.TestCase):
         root = Path(__file__).resolve().parents[1]
         with cls.connection.cursor() as cursor:
             cursor.execute(sql.SQL("SET search_path TO {}").format(sql.Identifier(cls.schema)))
-            for filename in ("tables.sql", "input_data.sql"):
+            for filename in ("tables.sql", "input_data.sql", "auth.sql"):
                 cursor.execute((root / "app/db/db_data" / filename).read_text(encoding="utf-8"))
 
     @classmethod
@@ -41,6 +41,9 @@ class PostgreSQLTests(unittest.TestCase):
         self.previous_config = app.config.copy()
         app.config.update(TESTING=True, db_config=self.db_config)
         self.client = app.test_client()
+        with self.client.session_transaction() as session:
+            session["user_id"] = 1
+            session["user_group"] = "admin"
 
     def tearDown(self):
         app.config.clear()
@@ -56,6 +59,30 @@ class PostgreSQLTests(unittest.TestCase):
         response = self.client.post("/query/products", data={"category_id": "4"})
         self.assertEqual(response.status_code, 200)
         self.assertIn("Ничего не найдено", response.get_data(as_text=True))
+
+    def test_admin_login_and_idempotent_auth_setup(self):
+        self.client.get("/exit")
+        response = self.client.post("/auth/", data={"login": "admin", "password": "wrong"})
+        self.assertEqual(response.status_code, 401)
+        response = self.client.post("/auth/", data={"login": "admin", "password": "admin"})
+        self.assertEqual(response.status_code, 302)
+        with self.client.session_transaction() as session:
+            self.assertEqual(session["user_group"], "admin")
+            self.assertIsInstance(session["user_id"], int)
+        self.assertEqual(self.client.get("/query/").status_code, 200)
+        script = Path(__file__).resolve().parents[1] / "app/db/db_data/auth.sql"
+        with DBContextManager(self.db_config) as cursor:
+            cursor.execute(script.read_text(encoding="utf-8"))
+        with DBContextManager(self.db_config) as cursor:
+            cursor.execute("SELECT count(*) FROM internal_user WHERE login = %s", ("admin",))
+            self.assertEqual(cursor.fetchone(), (1,))
+
+    def test_auth_login_does_not_allow_sql_injection(self):
+        self.client.get("/exit")
+        response = self.client.post("/auth/", data={"login": "admin' OR 1=1 --", "password": "admin"})
+        self.assertEqual(response.status_code, 401)
+        with self.client.session_transaction() as session:
+            self.assertNotIn("user_group", session)
 
     def test_suppliers_and_sql_parameter_binding(self):
         response = self.client.post("/query/suppliers", data={"city": "Москва"})

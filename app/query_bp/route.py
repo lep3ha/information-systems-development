@@ -2,6 +2,7 @@ from pathlib import Path
 
 from flask import Blueprint, abort, render_template, request
 
+from app.access import group_required
 from app.db.sql_provider import SQLProvider
 from app.query_bp.model_route import QUERIES, model_route
 
@@ -11,11 +12,13 @@ provider = SQLProvider(Path(__file__).parent / "sql")
 
 
 @blueprint_query.route("/")
+@group_required
 def query_menu_handler():
     return render_template("query_menu.html", queries=QUERIES)
 
 
 @blueprint_query.route("/<query_name>", methods=["GET", "POST"])
+@group_required
 def query_handler(query_name):
     if query_name not in QUERIES:
         abort(404)

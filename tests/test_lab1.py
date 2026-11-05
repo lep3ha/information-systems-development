@@ -14,6 +14,9 @@ class ApplicationTests(unittest.TestCase):
         self.previous_config = app.config.copy()
         app.config.update(TESTING=True, db_config={"dbname": "test"})
         self.client = app.test_client()
+        with self.client.session_transaction() as session:
+            session["user_id"] = 1
+            session["user_group"] = "admin"
 
     def tearDown(self):
         app.config.clear()
@@ -22,7 +25,6 @@ class ApplicationTests(unittest.TestCase):
     def test_navigation_and_forms(self):
         for path, text in (
             ("/", "Главное меню"),
-            ("/exit", "До свидания"),
             ("/query/", "Меню запросов"),
             ("/query/products", "Код категории"),
             ("/query/suppliers", "Город"),
@@ -33,6 +35,7 @@ class ApplicationTests(unittest.TestCase):
                 self.assertEqual(response.status_code, 200)
                 self.assertIn(text, response.get_data(as_text=True))
         self.assertEqual(self.client.get("/query/unknown").status_code, 404)
+        self.assertIn("До свидания", self.client.get("/exit").get_data(as_text=True))
 
     @patch("app.query_bp.model_route.select_list")
     def test_invalid_parameters_do_not_reach_database(self, select):
