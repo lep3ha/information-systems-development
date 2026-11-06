@@ -12,7 +12,7 @@ VALUES ('admin', 'pbkdf2:sha256:1000000$lab2-admin-2026$ad5a15322c8d06204b45a37e
 ON CONFLICT (login) DO NOTHING;
 
 INSERT INTO internal_user (login, password_hash, user_group)
-VALUES ('cashier', 'pbkdf2:sha256:1000000$lab2-cashier-2026$695b914bf814f58e01ca09995f95e1098c40251e42fd2b4a7fb2d444e8b4004f', 'cashier')
+VALUES ('storekeeper', 'pbkdf2:sha256:1000000$lab2-storekeeper-2026$1e748591a6078e939491de5640931749fa1e076215afbc869861c42b6f2f70d2', 'storekeeper')
 ON CONFLICT (login) DO NOTHING;
 
 COMMIT;

@@ -1,5 +1,6 @@
 import json
 import os
+from decimal import Decimal
 from pathlib import Path
 import unittest
 from uuid import uuid4
@@ -49,16 +50,53 @@ class PostgreSQLTests(unittest.TestCase):
         app.config.clear()
         app.config.update(self.previous_config)
 
-    def test_products_and_empty_category(self):
-        response = self.client.post("/query/products", data={"category_id": "1"})
+    def test_workpieces_and_empty_type(self):
+        response = self.client.post("/query/workpieces", data={"type_id": "1"})
         self.assertEqual(response.status_code, 200)
         html = response.get_data(as_text=True)
-        self.assertIn("Молоко 1 л", html)
-        self.assertIn("Сыр 200 г", html)
-        self.assertNotIn("Хлеб ржаной", html)
-        response = self.client.post("/query/products", data={"category_id": "4"})
+        self.assertIn("Круг стальной Ø20 мм", html)
+        self.assertIn("Лист стальной 2 мм", html)
+        self.assertNotIn("Поковка вала", html)
+        self.assertEqual(html.count("Круг стальной Ø20 мм"), 3)
+        for expected in ("Сталь 45", "2.500", "900.00", "950.00", "1000.00"):
+            self.assertIn(expected, html)
+        response = self.client.post("/query/workpieces", data={"type_id": "4"})
         self.assertEqual(response.status_code, 200)
         self.assertIn("Ничего не найдено", response.get_data(as_text=True))
+
+    def test_stock_prices_and_initial_accounting(self):
+        with DBContextManager(self.db_config) as cursor:
+            cursor.execute(
+                "SELECT price, quantity FROM stock_balance WHERE workpiece_id = %s ORDER BY price",
+                (1,),
+            )
+            self.assertEqual(cursor.fetchall(), [
+                (Decimal("900.00"), 10), (Decimal("950.00"), 8),
+                (Decimal("1000.00"), 7),
+            ])
+            cursor.execute("""
+                SELECT i.id FROM invoice AS i
+                LEFT JOIN invoice_item AS item ON item.invoice_id = i.id
+                GROUP BY i.id, i.total
+                HAVING i.total <> COALESCE(SUM(item.price * item.quantity), 0)
+            """)
+            self.assertEqual(cursor.fetchall(), [])
+            cursor.execute("""
+                WITH expected AS (
+                    SELECT item.workpiece_id, item.price,
+                           SUM(item.quantity) AS quantity,
+                           MAX(i.delivered_at) AS updated_at
+                    FROM invoice_item AS item
+                    JOIN invoice AS i ON i.id = item.invoice_id
+                    GROUP BY item.workpiece_id, item.price
+                )
+                SELECT b.workpiece_id, e.workpiece_id
+                FROM stock_balance AS b FULL JOIN expected AS e
+                  ON b.workpiece_id = e.workpiece_id AND b.price = e.price
+                WHERE b.quantity IS DISTINCT FROM e.quantity
+                   OR b.updated_at IS DISTINCT FROM e.updated_at
+            """)
+            self.assertEqual(cursor.fetchall(), [])
 
     def test_admin_login_and_idempotent_auth_setup(self):
         self.client.get("/exit")
@@ -74,8 +112,22 @@ class PostgreSQLTests(unittest.TestCase):
         with DBContextManager(self.db_config) as cursor:
             cursor.execute(script.read_text(encoding="utf-8"))
         with DBContextManager(self.db_config) as cursor:
-            cursor.execute("SELECT count(*) FROM internal_user WHERE login = %s", ("admin",))
-            self.assertEqual(cursor.fetchone(), (1,))
+            cursor.execute("SELECT login, count(*) FROM internal_user GROUP BY login ORDER BY login")
+            self.assertEqual(cursor.fetchall(), [("admin", 1), ("storekeeper", 1)])
+
+    def test_storekeeper_login_and_query_restrictions(self):
+        self.client.get("/exit")
+        response = self.client.post("/auth/", data={
+            "login": "storekeeper", "password": "storekeeper",
+        })
+        self.assertEqual(response.status_code, 302)
+        with self.client.session_transaction() as session:
+            self.assertEqual(session["user_group"], "storekeeper")
+        self.assertEqual(self.client.get("/").status_code, 200)
+        for path in ("/query/", "/query/workpieces", "/query/suppliers", "/query/invoices"):
+            self.assertEqual(self.client.get(path).status_code, 403)
+        self.client.get("/exit")
+        self.assertEqual(self.client.get("/").location, "/auth/")
 
     def test_auth_login_does_not_allow_sql_injection(self):
         self.client.get("/exit")
@@ -88,39 +140,48 @@ class PostgreSQLTests(unittest.TestCase):
         response = self.client.post("/query/suppliers", data={"city": "Москва"})
         self.assertEqual(response.status_code, 200)
         html = response.get_data(as_text=True)
-        self.assertIn("Молочный двор", html)
-        self.assertIn("Фруктовый сад", html)
-        self.assertNotIn("Пекарня Нева", html)
+        self.assertIn("МеталлСнаб", html)
+        self.assertIn("Литейный двор", html)
+        self.assertIn("2020-02-10", html)
+        self.assertIn("2020-02-20", html)
+        self.assertNotIn("Невский кузнечный завод", html)
         response = self.client.post("/query/suppliers", data={"city": "Москва' OR 1=1 --"})
         self.assertEqual(response.status_code, 200)
         self.assertIn("Ничего не найдено", response.get_data(as_text=True))
 
-    def test_delivery_totals_and_inclusive_moscow_period(self):
-        response = self.client.post("/query/deliveries", data={
-            "supplier_id": "1", "start_date": "2026-10-01", "end_date": "2026-10-31",
+    def test_invoice_totals_and_inclusive_moscow_period(self):
+        response = self.client.post("/query/invoices", data={
+            "supplier_id": "1", "start_date": "2020-03-01", "end_date": "2020-03-31",
         })
         self.assertEqual(response.status_code, 200)
         html = response.get_data(as_text=True)
-        for expected in ("1700.00", "1810.00", "600.00", "2026-10-01 00:00:00", "2026-10-31 23:59:59.999999"):
+        for expected in ("17000.00", "18100.00", "6000.00", "2020-03-01 00:00:00", "2020-03-31 23:59:59.999999"):
             self.assertIn(expected, html)
-        self.assertNotIn("2026-11-01", html)
-        self.assertNotIn("Пекарня Нева", html)
-        response = self.client.post("/query/deliveries", data={
-            "supplier_id": "1", "start_date": "2026-10-31", "end_date": "2026-10-31",
+        self.assertNotIn("2020-04-01", html)
+        self.assertNotIn("Невский кузнечный завод", html)
+        response = self.client.post("/query/invoices", data={
+            "supplier_id": "1", "start_date": "2020-03-31", "end_date": "2020-03-31",
         })
         html = response.get_data(as_text=True)
         self.assertEqual(response.status_code, 200)
-        self.assertIn("600.00", html)
-        self.assertNotIn("1700.00", html)
+        self.assertIn("6000.00", html)
+        self.assertNotIn("17000.00", html)
 
     def test_database_constraints(self):
         cases = (
-            ("INSERT INTO category (name) VALUES (%s)", ("Молочные продукты",)),
-            ("INSERT INTO product (category_id, name) VALUES (%s, %s)", (999999, "Нет категории")),
-            ("INSERT INTO delivery_item (delivery_id, product_id, price, quantity) VALUES (%s, %s, %s, %s)", (1, 1, -1, 1)),
-            ("INSERT INTO delivery_item (delivery_id, product_id, price, quantity) VALUES (%s, %s, %s, %s)", (1, 1, 1, 0)),
-            ("DELETE FROM delivery WHERE id = %s", (1,)),
-            ("DELETE FROM product WHERE id = %s", (1,)),
+            ("INSERT INTO workpiece_type (name) VALUES (%s)", ("Прокат",)),
+            ("INSERT INTO workpiece (type_id, name, weight, material) VALUES (%s, %s, %s, %s)", (999999, "Нет типа", 1, "Сталь")),
+            ("INSERT INTO workpiece (type_id, name, weight, material) VALUES (%s, %s, %s, %s)", (1, "Нулевой вес", 0, "Сталь")),
+            ("INSERT INTO invoice_item (invoice_id, workpiece_id, price, quantity) VALUES (%s, %s, %s, %s)", (1, 1, -1, 1)),
+            ("INSERT INTO invoice_item (invoice_id, workpiece_id, price, quantity) VALUES (%s, %s, %s, %s)", (1, 1, 1, 0)),
+            ("INSERT INTO invoice_item (invoice_id, workpiece_id, price, quantity) VALUES (%s, %s, %s, %s)", (999999, 1, 1, 1)),
+            ("INSERT INTO stock_balance (workpiece_id, price, quantity, updated_at) VALUES (%s, %s, %s, CURRENT_TIMESTAMP)", (1, 900, 1)),
+            ("INSERT INTO stock_balance (workpiece_id, price, quantity, updated_at) VALUES (%s, %s, %s, CURRENT_TIMESTAMP)", (1, 2, -1)),
+            ("INSERT INTO supplier (company_name, city) VALUES (%s, %s)", ("Нет договора", "Москва")),
+            ("INSERT INTO invoice (supplier_id, delivered_at, total) VALUES (%s, CURRENT_TIMESTAMP, %s)", (1, -1)),
+            ("DELETE FROM invoice WHERE id = %s", (1,)),
+            ("DELETE FROM workpiece WHERE id = %s", (1,)),
+            ("DELETE FROM supplier WHERE id = %s", (1,)),
         )
         for statement, params in cases:
             with self.subTest(statement=statement, params=params):
@@ -131,19 +192,19 @@ class PostgreSQLTests(unittest.TestCase):
     def test_commit_rollback_and_connection_release(self):
         committed = DBContextManager(self.db_config)
         with committed as cursor:
-            cursor.execute("INSERT INTO category (name) VALUES (%s)", ("Проверка фиксации",))
+            cursor.execute("INSERT INTO workpiece_type (name) VALUES (%s)", ("Проверка фиксации",))
         self.assertTrue(committed.connection.closed)
         self.assertTrue(committed.cursor.closed)
 
         rolled_back = DBContextManager(self.db_config)
         with self.assertRaises(RuntimeError):
             with rolled_back as cursor:
-                cursor.execute("INSERT INTO category (name) VALUES (%s)", ("Проверка отката",))
+                cursor.execute("INSERT INTO workpiece_type (name) VALUES (%s)", ("Проверка отката",))
                 raise RuntimeError("Проверка отката")
         self.assertTrue(rolled_back.connection.closed)
         self.assertTrue(rolled_back.cursor.closed)
         with DBContextManager(self.db_config) as cursor:
-            cursor.execute("SELECT name FROM category WHERE name IN (%s, %s)", ("Проверка фиксации", "Проверка отката"))
+            cursor.execute("SELECT name FROM workpiece_type WHERE name IN (%s, %s)", ("Проверка фиксации", "Проверка отката"))
             self.assertEqual(cursor.fetchall(), [("Проверка фиксации",)])
 
 

@@ -1,8 +1,8 @@
 {
     "host": "localhost",
     "port": 5432,
-    "dbname": "supermarket",
-    "user": "supermarket",
+    "dbname": "workpieces",
+    "user": "postgres",
     "password": "replace-with-your-password",
     "connect_timeout": 5
 }

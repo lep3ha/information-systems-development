@@ -26,12 +26,12 @@ class AuthorizationTests(unittest.TestCase):
 
     def test_anonymous_requests_redirect_before_query_execution(self):
         with patch("app.query_bp.model_route.select_list") as select:
-            for path in ("/", "/query/", "/query/products", "/query/suppliers", "/query/deliveries"):
+            for path in ("/", "/query/", "/query/workpieces", "/query/suppliers", "/query/invoices"):
                 with self.subTest(path=path):
                     response = self.client.get(path)
                     self.assertEqual(response.status_code, 302)
                     self.assertEqual(response.location, "/auth/")
-            self.assertEqual(self.client.post("/query/products", data={"category_id": "1"}).location, "/auth/")
+            self.assertEqual(self.client.post("/query/workpieces", data={"type_id": "1"}).location, "/auth/")
             select.assert_not_called()
 
     def test_login_form_and_required_fields(self):
@@ -52,7 +52,7 @@ class AuthorizationTests(unittest.TestCase):
         with self.client.session_transaction() as session:
             self.assertEqual(dict(session), {"user_id": 1, "user_group": "admin", "_permanent": True})
         self.assertEqual(self.client.get("/").status_code, 200)
-        for path in ("/query/", "/query/products", "/query/suppliers", "/query/deliveries"):
+        for path in ("/query/", "/query/workpieces", "/query/suppliers", "/query/invoices"):
             self.assertEqual(self.client.get(path).status_code, 200)
 
     @patch("app.auth_bp.model_route.select_list")
@@ -93,17 +93,17 @@ class AuthorizationTests(unittest.TestCase):
         self.assertEqual(response.status_code, 503)
         select.assert_not_called()
 
-    def test_cashier_and_unknown_group_cannot_access_queries(self):
+    def test_storekeeper_and_unknown_group_cannot_access_queries(self):
         with patch("app.query_bp.model_route.select_list") as select:
-            for group in ("cashier", "unknown"):
+            for group in ("storekeeper", "unknown"):
                 with self.client.session_transaction() as session:
                     session["user_id"] = 2
                     session["user_group"] = group
                 self.assertEqual(self.client.get("/").status_code, 200)
-                for path in ("/query/", "/query/products", "/query/suppliers", "/query/deliveries"):
+                for path in ("/query/", "/query/workpieces", "/query/suppliers", "/query/invoices"):
                     with self.subTest(group=group, path=path):
                         self.assertEqual(self.client.get(path).status_code, 403)
-                        self.assertEqual(self.client.post(path, data={"category_id": "1"}).status_code, 403 if path != "/query/" else 405)
+                        self.assertEqual(self.client.post(path, data={"type_id": "1"}).status_code, 403 if path != "/query/" else 405)
             select.assert_not_called()
 
     def test_exit_clears_session(self):

@@ -8,27 +8,34 @@ from app.db.select import select_list
 
 
 QUERIES = {
-    "products": {
-        "title": "Товары выбранной категории",
-        "template": "products.html",
-        "sql": "products.sql",
-        "columns": (("id", "Код товара"), ("name", "Товар"), ("category", "Категория")),
+    "workpieces": {
+        "title": "Заготовки выбранного типа",
+        "template": "workpieces.html",
+        "sql": "workpieces.sql",
+        "columns": (
+            ("id", "Код заготовки"), ("name", "Заготовка"), ("type", "Тип"),
+            ("weight", "Вес, кг"), ("material", "Материал"),
+            ("price", "Цена, руб."), ("quantity", "Количество, шт."),
+            ("updated_at", "Дата обновления (Москва)"),
+        ),
     },
     "suppliers": {
         "title": "Поставщики из выбранного города",
         "template": "suppliers.html",
         "sql": "suppliers.sql",
         "columns": (
-            ("company_name", "Поставщик"), ("city", "Город"), ("phone", "Телефон"),
+            ("id", "Код поставщика"), ("company_name", "Поставщик"),
+            ("city", "Город"), ("phone", "Телефон"),
+            ("contract_date", "Дата заключения договора"),
         ),
     },
-    "deliveries": {
-        "title": "Поставки поставщика за период",
-        "template": "deliveries.html",
-        "sql": "deliveries.sql",
+    "invoices": {
+        "title": "Накладные поставщика за период",
+        "template": "invoices.html",
+        "sql": "invoices.sql",
         "columns": (
-            ("id", "Номер поставки"), ("delivered_at", "Дата поставки (Москва)"),
-            ("company_name", "Поставщик"), ("total", "Сумма поставки"),
+            ("id", "Номер накладной"), ("delivered_at", "Дата поставки (Москва)"),
+            ("company_name", "Поставщик"), ("total", "Сумма накладной"),
         ),
     },
 }
@@ -53,8 +60,8 @@ def positive_id(value):
 
 
 def query_params(query_name, values):
-    if query_name == "products":
-        return {"category_id": positive_id(values.get("category_id", ""))}
+    if query_name == "workpieces":
+        return {"type_id": positive_id(values.get("type_id", ""))}
     if query_name == "suppliers":
         city = values.get("city", "").strip()
         if not city or len(city) > 100:

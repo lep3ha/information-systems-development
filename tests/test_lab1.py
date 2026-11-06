@@ -26,9 +26,9 @@ class ApplicationTests(unittest.TestCase):
         for path, text in (
             ("/", "Главное меню"),
             ("/query/", "Меню запросов"),
-            ("/query/products", "Код категории"),
+            ("/query/workpieces", "Код типа заготовок"),
             ("/query/suppliers", "Город"),
-            ("/query/deliveries", "Начальная дата"),
+            ("/query/invoices", "Начальная дата"),
         ):
             with self.subTest(path=path):
                 response = self.client.get(path)
@@ -40,16 +40,16 @@ class ApplicationTests(unittest.TestCase):
     @patch("app.query_bp.model_route.select_list")
     def test_invalid_parameters_do_not_reach_database(self, select):
         cases = [
-            ("products", {}),
-            ("products", {"category_id": "0"}),
-            ("products", {"category_id": "1.5"}),
-            ("products", {"category_id": "2147483648"}),
+            ("workpieces", {}),
+            ("workpieces", {"type_id": "0"}),
+            ("workpieces", {"type_id": "1.5"}),
+            ("workpieces", {"type_id": "2147483648"}),
             ("suppliers", {"city": "   "}),
             ("suppliers", {"city": "x" * 101}),
             ("suppliers", {"city": "Москва\x00"}),
-            ("deliveries", {"supplier_id": "1", "start_date": "2026-02-30", "end_date": "2026-03-01"}),
-            ("deliveries", {"supplier_id": "1", "start_date": "2026-11-01", "end_date": "2026-10-01"}),
-            ("deliveries", {"supplier_id": "1", "start_date": "2026-10-01"}),
+            ("invoices", {"supplier_id": "1", "start_date": "2020-02-30", "end_date": "2020-03-01"}),
+            ("invoices", {"supplier_id": "1", "start_date": "2020-04-01", "end_date": "2020-03-01"}),
+            ("invoices", {"supplier_id": "1", "start_date": "2020-03-01"}),
         ]
         for query, values in cases:
             with self.subTest(query=query, values=values):
@@ -60,7 +60,7 @@ class ApplicationTests(unittest.TestCase):
 
     @patch("app.query_bp.model_route.select_list", return_value=[])
     def test_empty_result_is_success(self, select):
-        response = self.client.post("/query/products", data={"category_id": "4"})
+        response = self.client.post("/query/workpieces", data={"type_id": "4"})
         self.assertEqual(response.status_code, 200)
         self.assertIn("Ничего не найдено", response.get_data(as_text=True))
 
@@ -74,20 +74,25 @@ class ApplicationTests(unittest.TestCase):
 
     @patch("app.query_bp.model_route.select_list", return_value=[])
     def test_period_parameters_are_validated_dates(self, select):
-        response = self.client.post("/query/deliveries", data={
-            "supplier_id": "1", "start_date": "2026-10-01", "end_date": "2026-10-31",
+        response = self.client.post("/query/invoices", data={
+            "supplier_id": "1", "start_date": "2020-03-01", "end_date": "2020-03-31",
         })
         self.assertEqual(response.status_code, 200)
         self.assertEqual(select.call_args.args[1], {
-            "supplier_id": 1, "start_date": date(2026, 10, 1), "end_date": date(2026, 10, 31),
+            "supplier_id": 1, "start_date": date(2020, 3, 1), "end_date": date(2020, 3, 31),
         })
 
     @patch("app.query_bp.model_route.select_list")
     def test_results_are_rendered_and_escaped(self, select):
         cases = (
-            ("products", {"category_id": "1"}, [{"id": 1, "name": "<script>milk</script>", "category": "Молочные"}], "&lt;script&gt;milk&lt;/script&gt;"),
-            ("suppliers", {"city": "Москва"}, [{"company_name": "Фрукты", "city": "Москва", "phone": None}], "Фрукты"),
-            ("deliveries", {"supplier_id": "1", "start_date": "2026-10-01", "end_date": "2026-10-31"}, [{"id": 1, "delivered_at": "2026-10-01 00:00:00", "company_name": "Молочный двор", "total": Decimal("1700.00")}], "1700.00"),
+            ("workpieces", {"type_id": "1"}, [{
+                "id": 1, "name": "<script>Сталь</script>", "type": "Прокат",
+                "weight": Decimal("2.500"), "material": "Сталь 45",
+                "price": Decimal("900.00"), "quantity": 10,
+                "updated_at": "2020-03-01 00:00:00",
+            }], "&lt;script&gt;Сталь&lt;/script&gt;"),
+            ("suppliers", {"city": "Москва"}, [{"id": 1, "company_name": "МеталлСнаб", "city": "Москва", "phone": None, "contract_date": date(2020, 2, 10)}], "МеталлСнаб"),
+            ("invoices", {"supplier_id": "1", "start_date": "2020-03-01", "end_date": "2020-03-31"}, [{"id": 1, "delivered_at": "2020-03-01 00:00:00", "company_name": "МеталлСнаб", "total": Decimal("17000.00")}], "17000.00"),
         )
         for query, values, rows, text in cases:
             with self.subTest(query=query):
@@ -113,7 +118,7 @@ class ApplicationTests(unittest.TestCase):
     def test_missing_database_config_is_service_unavailable(self, select):
         app.config.pop("db_config")
         with self.assertLogs(app.logger, level="ERROR"):
-            response = self.client.post("/query/products", data={"category_id": "1"})
+            response = self.client.post("/query/workpieces", data={"type_id": "1"})
         self.assertEqual(response.status_code, 503)
         select.assert_not_called()
 
