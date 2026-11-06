@@ -151,16 +151,16 @@ class PostgreSQLTests(unittest.TestCase):
 
     def test_invoice_totals_and_inclusive_moscow_period(self):
         response = self.client.post("/query/invoices", data={
-            "supplier_id": "1", "start_date": "2020-03-01", "end_date": "2020-03-31",
+            "supplier_id": "1", "start_date": "2026-03-01", "end_date": "2026-03-31",
         })
         self.assertEqual(response.status_code, 200)
         html = response.get_data(as_text=True)
-        for expected in ("17000.00", "18100.00", "6000.00", "2020-03-01 00:00:00", "2020-03-31 23:59:59.999999"):
+        for expected in ("17000.00", "18100.00", "6000.00", "2026-03-01 00:00:00", "2026-03-31 23:59:59.999999"):
             self.assertIn(expected, html)
-        self.assertNotIn("2020-04-01", html)
+        self.assertNotIn("2026-04-01", html)
         self.assertNotIn("Невский кузнечный завод", html)
         response = self.client.post("/query/invoices", data={
-            "supplier_id": "1", "start_date": "2020-03-31", "end_date": "2020-03-31",
+            "supplier_id": "1", "start_date": "2026-03-31", "end_date": "2026-03-31",
         })
         html = response.get_data(as_text=True)
         self.assertEqual(response.status_code, 200)

@@ -1,7 +1,7 @@
 {
     "host": "db",
     "port": 5432,
-    "dbname": "supermarket",
+    "dbname": "workpieces",
     "user": "supermarket",
     "password": "supermarket",
     "connect_timeout": 5
