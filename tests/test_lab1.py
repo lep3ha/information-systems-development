@@ -47,9 +47,9 @@ class ApplicationTests(unittest.TestCase):
             ("suppliers", {"city": "   "}),
             ("suppliers", {"city": "x" * 101}),
             ("suppliers", {"city": "Москва\x00"}),
-            ("invoices", {"supplier_id": "1", "start_date": "2020-02-30", "end_date": "2020-03-01"}),
-            ("invoices", {"supplier_id": "1", "start_date": "2020-04-01", "end_date": "2020-03-01"}),
-            ("invoices", {"supplier_id": "1", "start_date": "2020-03-01"}),
+            ("invoices", {"supplier_id": "1", "start_date": "2026-02-30", "end_date": "2026-03-01"}),
+            ("invoices", {"supplier_id": "1", "start_date": "2026-04-01", "end_date": "2026-03-01"}),
+            ("invoices", {"supplier_id": "1", "start_date": "2026-03-01"}),
         ]
         for query, values in cases:
             with self.subTest(query=query, values=values):
@@ -75,11 +75,11 @@ class ApplicationTests(unittest.TestCase):
     @patch("app.query_bp.model_route.select_list", return_value=[])
     def test_period_parameters_are_validated_dates(self, select):
         response = self.client.post("/query/invoices", data={
-            "supplier_id": "1", "start_date": "2020-03-01", "end_date": "2020-03-31",
+            "supplier_id": "1", "start_date": "2026-03-01", "end_date": "2026-03-31",
         })
         self.assertEqual(response.status_code, 200)
         self.assertEqual(select.call_args.args[1], {
-            "supplier_id": 1, "start_date": date(2020, 3, 1), "end_date": date(2020, 3, 31),
+            "supplier_id": 1, "start_date": date(2026, 3, 1), "end_date": date(2026, 3, 31),
         })
 
     @patch("app.query_bp.model_route.select_list")
@@ -89,10 +89,10 @@ class ApplicationTests(unittest.TestCase):
                 "id": 1, "name": "<script>Сталь</script>", "type": "Прокат",
                 "weight": Decimal("2.500"), "material": "Сталь 45",
                 "price": Decimal("900.00"), "quantity": 10,
-                "updated_at": "2020-03-01 00:00:00",
+                "updated_at": "2026-03-01 00:00:00",
             }], "&lt;script&gt;Сталь&lt;/script&gt;"),
             ("suppliers", {"city": "Москва"}, [{"id": 1, "company_name": "МеталлСнаб", "city": "Москва", "phone": None, "contract_date": date(2020, 2, 10)}], "МеталлСнаб"),
-            ("invoices", {"supplier_id": "1", "start_date": "2020-03-01", "end_date": "2020-03-31"}, [{"id": 1, "delivered_at": "2020-03-01 00:00:00", "company_name": "МеталлСнаб", "total": Decimal("17000.00")}], "17000.00"),
+            ("invoices", {"supplier_id": "1", "start_date": "2026-03-01", "end_date": "2026-03-31"}, [{"id": 1, "delivered_at": "2026-03-01 00:00:00", "company_name": "МеталлСнаб", "total": Decimal("17000.00")}], "17000.00"),
         )
         for query, values, rows, text in cases:
             with self.subTest(query=query):
