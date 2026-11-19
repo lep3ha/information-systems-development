@@ -1,4 +1,4 @@
 {
-  "admin": ["query_bp"],
-  "storekeeper": []
+  "admin": ["query_bp", "invoice_bp"],
+  "storekeeper": ["invoice_bp"]
 }

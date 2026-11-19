@@ -1,1 +1,7 @@
-select user_id, user_group  from external_user where login = (%s) and password = (%s)
+SELECT
+    user_id,
+    user_group
+FROM external_user
+WHERE
+    login = (%s)
+    AND password = (%s)

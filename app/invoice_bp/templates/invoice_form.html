@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% from "invoice_utils.html" import render_workpiece %}
+{% block title %}Приёмка поставки — Поставка заготовок{% endblock %}
+{% block content %}
+<h1>Приёмка поставки заготовок</h1>
+{% if error %}<p role="alert">{{ error }}</p>{% endif %}
+<form method="post">
+    <p><label>Поставщик
+        <select name="supplier_id">
+            <option value="">Выберите поставщика</option>
+            {% for supplier in suppliers %}
+            <option value="{{ supplier.id }}" {% if draft.supplier_id|string == supplier.id|string %}selected{% endif %}>{{ supplier.company_name }}</option>
+            {% endfor %}
+        </select>
+    </label></p>
+    <p><label>Дата поставки (Москва)
+        <input name="delivered_at" type="date" value="{{ draft.delivered_at }}">
+    </label></p>
+    <div style="display: flex; flex-wrap: wrap; gap: 2rem; align-items: flex-start">
+        <section style="flex: 1; min-width: 18rem">
+            <h2>Каталог заготовок</h2>
+            {% for item in workpieces %}{{ render_workpiece(item, values) }}
+            {% else %}<p>Заготовки отсутствуют.</p>{% endfor %}
+        </section>
+        <section style="flex: 1; min-width: 18rem">
+            <h2>Состав накладной</h2>
+            {% if draft.lines %}
+            <table border="1" cellpadding="5">
+                <thead><tr><th>Заготовка</th><th>Цена, руб.</th><th>Количество, шт.</th><th>Сумма, руб.</th><th>Действие</th></tr></thead>
+                <tbody>
+                    {% for line in draft.lines %}
+                    <tr>
+                        <td>{{ names.get(line.workpiece_id, line.workpiece_id) }}</td>
+                        <td>{{ line.price }}</td><td>{{ line.quantity }}</td>
+                        <td>{{ '%.2f'|format(line_total(line)) }}</td>
+                        <td><button type="submit" name="action" value="remove:{{ loop.index0 }}">Удалить</button></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}<p>Накладная пуста.</p>{% endif %}
+            <p><strong>Общая сумма: {{ '%.2f'|format(total) }} руб.</strong></p>
+            <button type="submit" name="action" value="clear">Очистить</button>
+            <button type="submit" name="action" value="accept">Принять поставку</button>
+        </section>
+    </div>
+</form>
+<p><a href="{{ url_for('main_menu') }}">Вернуться в меню</a></p>
+{% endblock %}

@@ -1,6 +1,8 @@
 SELECT
-    user_id as in_id,
-    username as login,
-    user_group as role
+    user_id AS in_id,
+    username AS login,
+    user_group AS role
 FROM users
-WHERE username = %(login)s AND password = %(pass)s
+WHERE
+    username = %(login)s
+    AND password = %(pass)s

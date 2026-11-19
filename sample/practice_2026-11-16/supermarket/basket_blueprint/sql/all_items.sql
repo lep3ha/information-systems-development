@@ -1,1 +1,5 @@
-select prod_id, prod_name, prod_price from product
+SELECT
+    prod_id,
+    prod_name,
+    prod_price
+FROM product

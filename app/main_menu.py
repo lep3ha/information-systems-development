@@ -8,12 +8,14 @@ from flask import Flask, render_template, session
 from app.access import login_required
 from app.auth_bp.route import blueprint_auth
 from app.query_bp.route import blueprint_query
+from app.invoice_bp.route import blueprint_invoice
 
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY") or token_hex(32)
 app.register_blueprint(blueprint_query, url_prefix="/query")
 app.register_blueprint(blueprint_auth, url_prefix="/auth")
+app.register_blueprint(blueprint_invoice, url_prefix="/invoice")
 
 with (Path(__file__).parent / "data" / "access.json").open(encoding="utf-8") as access_file:
     app.config["db_access"] = json.load(access_file)

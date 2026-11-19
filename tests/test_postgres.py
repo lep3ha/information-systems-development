@@ -4,6 +4,7 @@ from decimal import Decimal
 from pathlib import Path
 import unittest
 from uuid import uuid4
+from unittest.mock import patch
 
 import psycopg2
 from psycopg2 import sql
@@ -206,6 +207,82 @@ class PostgreSQLTests(unittest.TestCase):
         with DBContextManager(self.db_config) as cursor:
             cursor.execute("SELECT name FROM workpiece_type WHERE name IN (%s, %s)", ("Проверка фиксации", "Проверка отката"))
             self.assertEqual(cursor.fetchall(), [("Проверка фиксации",)])
+
+    def test_receiving_invoice_stock_and_atomic_rollback(self):
+        from app.invoice_bp.route import provider
+
+        with DBContextManager(self.db_config) as cursor:
+            cursor.execute("INSERT INTO workpiece_type (name) VALUES ('Приёмка тест') RETURNING id")
+            type_id = cursor.fetchone()[0]
+            cursor.execute("INSERT INTO workpiece (type_id, name, weight, material) VALUES (%s, 'Тест приёмки', 1, 'Сталь') RETURNING id", (type_id,))
+            workpiece_id = cursor.fetchone()[0]
+
+        def cleanup_receiving():
+            with DBContextManager(self.db_config) as cursor:
+                cursor.execute("SELECT DISTINCT invoice_id FROM invoice_item WHERE workpiece_id = %s", (workpiece_id,))
+                invoice_ids = [row[0] for row in cursor.fetchall()]
+                cursor.execute("DELETE FROM invoice_item WHERE workpiece_id = %s", (workpiece_id,))
+                cursor.execute("DELETE FROM invoice WHERE id = ANY(%s)", (invoice_ids,))
+                cursor.execute("DELETE FROM stock_balance WHERE workpiece_id = %s", (workpiece_id,))
+                cursor.execute("DELETE FROM workpiece WHERE id = %s", (workpiece_id,))
+                cursor.execute("DELETE FROM workpiece_type WHERE id = %s", (type_id,))
+
+        self.addCleanup(cleanup_receiving)
+
+        self.client.get("/exit")
+        response = self.client.post("/auth/", data={"login": "storekeeper", "password": "storekeeper"})
+        self.assertEqual(response.status_code, 302)
+        header = {"supplier_id": "1", "delivered_at": "2026-11-19"}
+        for price, quantity in (("12.50", "2"), ("12.50", "3"), ("20.00", "4")):
+            response = self.client.post("/invoice/", data={
+                **header, "workpiece_id": str(workpiece_id),
+                f"price_{workpiece_id}": price, f"quantity_{workpiece_id}": quantity,
+            })
+            self.assertEqual(response.status_code, 302)
+        response = self.client.post("/invoice/", data={**header, "action": "accept"})
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Поставка принята", response.get_data(as_text=True))
+        with self.client.session_transaction() as session:
+            self.assertNotIn("invoice_draft", session)
+        with DBContextManager(self.db_config) as cursor:
+            cursor.execute("SELECT price, quantity, (updated_at AT TIME ZONE 'Europe/Moscow')::date::text FROM stock_balance WHERE workpiece_id = %s ORDER BY price", (workpiece_id,))
+            self.assertEqual(cursor.fetchall(), [(Decimal("12.50"), 5, "2026-11-19"), (Decimal("20.00"), 4, "2026-11-19")])
+            cursor.execute("SELECT i.total, count(*) FROM invoice i JOIN invoice_item item ON item.invoice_id = i.id WHERE item.workpiece_id = %s GROUP BY i.id", (workpiece_id,))
+            self.assertEqual(cursor.fetchall(), [(Decimal("142.50"), 3)])
+
+        # An earlier delivery replaces the balance date as agreed, while adding quantity.
+        earlier = {**header, "delivered_at": "2026-11-18"}
+        self.client.post("/invoice/", data={**earlier, "workpiece_id": str(workpiece_id), f"price_{workpiece_id}": "12.50", f"quantity_{workpiece_id}": "1"})
+        self.assertEqual(self.client.post("/invoice/", data={**earlier, "action": "accept"}).status_code, 200)
+        with DBContextManager(self.db_config) as cursor:
+            cursor.execute("SELECT quantity, (updated_at AT TIME ZONE 'Europe/Moscow')::date::text FROM stock_balance WHERE workpiece_id = %s AND price = 12.50", (workpiece_id,))
+            self.assertEqual(cursor.fetchone(), (6, "2026-11-18"))
+            cursor.execute("SELECT (SELECT count(*) FROM invoice), (SELECT count(*) FROM invoice_item)")
+            before = cursor.fetchone()
+
+        # Fail on the second line after the first line and its balance were written.
+        for price in ("12.50", "33.00"):
+            self.client.post("/invoice/", data={**header, "workpiece_id": str(workpiece_id), f"price_{workpiece_id}": price, f"quantity_{workpiece_id}": "1"})
+        original_get = provider.get
+        calls = 0
+
+        def fail_second_line(filename):
+            nonlocal calls
+            if filename == "create_item.sql":
+                calls += 1
+                if calls == 2:
+                    return original_get(filename) + " SELECT 1 / 0;"
+            return original_get(filename)
+
+        with patch.object(provider, "get", side_effect=fail_second_line):
+            self.assertEqual(self.client.post("/invoice/", data={**header, "action": "accept"}).status_code, 503)
+        with self.client.session_transaction() as session:
+            self.assertEqual(len(session["invoice_draft"]["lines"]), 2)
+        with DBContextManager(self.db_config) as cursor:
+            cursor.execute("SELECT (SELECT count(*) FROM invoice), (SELECT count(*) FROM invoice_item)")
+            self.assertEqual(cursor.fetchone(), before)
+            cursor.execute("SELECT price, quantity, (updated_at AT TIME ZONE 'Europe/Moscow')::date::text FROM stock_balance WHERE workpiece_id = %s ORDER BY price", (workpiece_id,))
+            self.assertEqual(cursor.fetchall(), [(Decimal("12.50"), 6, "2026-11-18"), (Decimal("20.00"), 4, "2026-11-19")])
 
 
 if __name__ == "__main__":
