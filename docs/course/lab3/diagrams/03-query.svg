@@ -1,54 +1,118 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="2030" viewBox="0 0 1600 2030">
+<svg xmlns="http://www.w3.org/2000/svg" width="2700" height="3140" viewBox="0 0 2700 3140">
 <rect width="100%" height="100%" fill="white"/>
-<defs><marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0 0 L9 4 L0 8" fill="none" stroke="#222"/></marker></defs>
-<text x="800" y="40" font-family="Arial, sans-serif" font-size="28" text-anchor="middle" fill="#111">Параметризованный запрос: поставщики города</text>
-<rect x="5" y="75" width="190" height="50" rx="8" fill="#f4f7fb" stroke="#333" stroke-width="2"/>
-<text x="100.0" y="105" font-family="Arial, sans-serif" font-size="21" text-anchor="middle" fill="#111">Пользователь</text>
-<path d="M100 125 L100 2005" stroke="#333" stroke-width="2" fill="none" stroke-dasharray="7 6"/>
-<rect x="305" y="75" width="190" height="50" rx="8" fill="#f4f7fb" stroke="#333" stroke-width="2"/>
-<text x="400.0" y="105" font-family="Arial, sans-serif" font-size="21" text-anchor="middle" fill="#111">View</text>
-<path d="M400 125 L400 2005" stroke="#333" stroke-width="2" fill="none" stroke-dasharray="7 6"/>
-<rect x="755" y="75" width="190" height="50" rx="8" fill="#f4f7fb" stroke="#333" stroke-width="2"/>
-<text x="850.0" y="105" font-family="Arial, sans-serif" font-size="21" text-anchor="middle" fill="#111">Controller</text>
-<path d="M850 125 L850 2005" stroke="#333" stroke-width="2" fill="none" stroke-dasharray="7 6"/>
-<rect x="1295" y="75" width="190" height="50" rx="8" fill="#f4f7fb" stroke="#333" stroke-width="2"/>
-<text x="1390.0" y="105" font-family="Arial, sans-serif" font-size="21" text-anchor="middle" fill="#111">Model</text>
-<path d="M1390 125 L1390 2005" stroke="#333" stroke-width="2" fill="none" stroke-dasharray="7 6"/>
-<rect x="695" y="150" width="310" height="55" rx="8" fill="#f4f7fb" stroke="#333" stroke-width="2"/>
-<text x="850.0" y="180" font-family="Arial, sans-serif" font-size="21" text-anchor="middle" fill="#111">query_handler</text>
-<text x="475.0" y="222" font-family="Arial, sans-serif" font-size="19" text-anchor="middle" fill="#111">Выбрать запрос «Поставщики города»</text>
-<path d="M100 265 L850 265" stroke="#333" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
-<text x="1010.0" y="332" font-family="Arial, sans-serif" font-size="19" text-anchor="middle" fill="#111">Передача управления</text>
-<text x="1010.0" y="358" font-family="Arial, sans-serif" font-size="19" text-anchor="middle" fill="#111">декоратору group_required</text>
-<path d="M850 375 L1170 375" stroke="#333" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
-<text x="1010.0" y="442" font-family="Arial, sans-serif" font-size="19" text-anchor="middle" fill="#111">Управление к декоратору вернулось</text>
-<text x="1010.0" y="468" font-family="Arial, sans-serif" font-size="19" text-anchor="middle" fill="#111">сессия и группа разрешены</text>
-<path d="M1170 485 L850 485" stroke="#333" stroke-width="2" fill="none" marker-end="url(#arrow)" stroke-dasharray="7 6"/>
-<text x="625.0" y="552" font-family="Arial, sans-serif" font-size="19" text-anchor="middle" fill="#111">suppliers.html: форма ввода города</text>
-<path d="M850 595 L400 595" stroke="#333" stroke-width="2" fill="none" marker-end="url(#arrow)" stroke-dasharray="7 6"/>
-<text x="250.0" y="662" font-family="Arial, sans-serif" font-size="19" text-anchor="middle" fill="#111">Форма запроса</text>
-<path d="M400 705 L100 705" stroke="#333" stroke-width="2" fill="none" marker-end="url(#arrow)" stroke-dasharray="7 6"/>
-<text x="475.0" y="772" font-family="Arial, sans-serif" font-size="19" text-anchor="middle" fill="#111">Ввести город и выполнить (POST)</text>
-<path d="M100 815 L850 815" stroke="#333" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
-<text x="1010.0" y="882" font-family="Arial, sans-serif" font-size="19" text-anchor="middle" fill="#111">Передача управления</text>
-<text x="1010.0" y="908" font-family="Arial, sans-serif" font-size="19" text-anchor="middle" fill="#111">декоратору group_required</text>
-<path d="M850 925 L1170 925" stroke="#333" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
-<text x="1010.0" y="992" font-family="Arial, sans-serif" font-size="19" text-anchor="middle" fill="#111">Управление к декоратору вернулось</text>
-<text x="1010.0" y="1018" font-family="Arial, sans-serif" font-size="19" text-anchor="middle" fill="#111">сессия и группа разрешены</text>
-<path d="M1170 1035 L850 1035" stroke="#333" stroke-width="2" fill="none" marker-end="url(#arrow)" stroke-dasharray="7 6"/>
-<text x="1120.0" y="1102" font-family="Arial, sans-serif" font-size="19" text-anchor="middle" fill="#111">model_route: проверка города; SQLProvider</text>
-<path d="M850 1145 L1390 1145" stroke="#333" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
-<rect x="1225" y="1215" width="330" height="73" rx="8" fill="#f4f7fb" stroke="#333" stroke-width="2"/>
-<text x="1390.0" y="1245" font-family="Arial, sans-serif" font-size="21" text-anchor="middle" fill="#111">select_list → PostgreSQL</text>
-<text x="1390.0" y="1273" font-family="Arial, sans-serif" font-size="21" text-anchor="middle" fill="#111">DBContextManager</text>
-<text x="1120.0" y="1322" font-family="Arial, sans-serif" font-size="19" text-anchor="middle" fill="#111">Список поставщиков</text>
-<path d="M1390 1365 L850 1365" stroke="#333" stroke-width="2" fill="none" marker-end="url(#arrow)" stroke-dasharray="7 6"/>
-<text x="625.0" y="1432" font-family="Arial, sans-serif" font-size="19" text-anchor="middle" fill="#111">query_result.html: строки и колонки</text>
-<path d="M850 1475 L400 1475" stroke="#333" stroke-width="2" fill="none" marker-end="url(#arrow)" stroke-dasharray="7 6"/>
-<text x="250.0" y="1542" font-family="Arial, sans-serif" font-size="19" text-anchor="middle" fill="#111">Результат или «Ничего не найдено»</text>
-<path d="M400 1585 L100 1585" stroke="#333" stroke-width="2" fill="none" marker-end="url(#arrow)" stroke-dasharray="7 6"/>
-<rect x="200" y="1665" width="1260" height="52" rx="8" fill="#f4f7fb" stroke="#333" stroke-width="2"/>
-<text x="830.0" y="1695" font-family="Arial, sans-serif" font-size="21" text-anchor="middle" fill="#111">Ошибка ввода → форма с сообщением (400); ошибка БД → сообщение (503).</text>
-<rect x="200" y="1730" width="1260" height="52" rx="8" fill="#f4f7fb" stroke="#333" stroke-width="2"/>
-<text x="830.0" y="1760" font-family="Arial, sans-serif" font-size="21" text-anchor="middle" fill="#111">Нет сессии → форма входа; нет прав → HTTP 403.</text>
+<defs><marker id="arrow" markerWidth="12" markerHeight="10" refX="11" refY="5" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M0 0 L11 5 L0 10 Z" fill="#111"/></marker></defs>
+<g xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#111" stroke-width="3.5"><circle cx="110" cy="48" r="18" /><path d="M110 66 V123 M75 91 H145 M110 123 L78 163 M110 123 L142 163" /></g>
+<text xmlns="http://www.w3.org/2000/svg" x="110" y="203" font-family="Arial, sans-serif" font-size="25" text-anchor="middle" fill="#111">Пользователь</text>
+<text xmlns="http://www.w3.org/2000/svg" x="440" y="105" font-family="Arial, sans-serif" font-size="72" text-anchor="middle" fill="#111">V</text>
+<text xmlns="http://www.w3.org/2000/svg" x="440" y="154" font-family="Arial, sans-serif" font-size="28" text-anchor="middle" fill="#111">View</text>
+<text xmlns="http://www.w3.org/2000/svg" x="815" y="105" font-family="Arial, sans-serif" font-size="72" text-anchor="middle" fill="#111">C</text>
+<text xmlns="http://www.w3.org/2000/svg" x="815" y="154" font-family="Arial, sans-serif" font-size="28" text-anchor="middle" fill="#111">Controller</text>
+<text xmlns="http://www.w3.org/2000/svg" x="2140.0" y="105" font-family="Arial, sans-serif" font-size="72" text-anchor="middle" fill="#111">M</text>
+<text xmlns="http://www.w3.org/2000/svg" x="2140.0" y="154" font-family="Arial, sans-serif" font-size="28" text-anchor="middle" fill="#111">Model</text>
+<path xmlns="http://www.w3.org/2000/svg" d="M250 210 V3110" fill="none" stroke="#111" stroke-width="2.5" stroke-dasharray="9 8" />
+<path xmlns="http://www.w3.org/2000/svg" d="M630 210 V3110" fill="none" stroke="#111" stroke-width="2.5" stroke-dasharray="9 8" />
+<path xmlns="http://www.w3.org/2000/svg" d="M1600 210 V3110" fill="none" stroke="#111" stroke-width="2.5" stroke-dasharray="9 8" />
+<path xmlns="http://www.w3.org/2000/svg" d="M2680 210 V3110" fill="none" stroke="#111" stroke-width="2.5" stroke-dasharray="9 8" />
+<rect x="665" y="245" width="300" height="210" rx="18" fill="white" stroke="#111" stroke-width="2.5"/>
+<text x="815.0" y="358.5" font-family="Arial, sans-serif" font-size="25" text-anchor="middle" fill="#111">query_handler (GET)</text>
+<path d="M110 285 H665" fill="none" stroke="#111" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="385" y="231" font-family="Arial, sans-serif" font-size="23" text-anchor="middle" fill="#111">выбрать запрос</text>
+<text x="1255" y="275" font-family="Arial, sans-serif" font-size="22" text-anchor="middle" fill="#111">Передача управления</text>
+<text x="1255" y="305" font-family="Arial, sans-serif" font-size="22" text-anchor="middle" fill="#111">декоратору group_required</text>
+<path d="M965 325 H1545" fill="none" stroke="#111" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="1255" y="360" font-family="Arial, sans-serif" font-size="22" text-anchor="middle" fill="#111">Управление к декоратору вернулось</text>
+<text x="1255" y="390" font-family="Arial, sans-serif" font-size="22" text-anchor="middle" fill="#111">доступ разрешён</text>
+<path d="M1545 412 H965" fill="none" stroke="#111" stroke-width="2.5" marker-end="url(#arrow)" stroke-dasharray="9 8"/>
+<rect x="280" y="535" width="320" height="78" rx="18" fill="white" stroke="#111" stroke-width="2.5"/>
+<text x="440.0" y="582.5" font-family="Arial, sans-serif" font-size="25" text-anchor="middle" fill="#111">suppliers.html</text>
+<path d="M815 455 V574.0 H600" fill="none" stroke="#111" stroke-width="2.5" marker-end="url(#arrow)"/>
+<path d="M280 574.0 H110" fill="none" stroke="#111" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="133" y="651" font-family="Arial, sans-serif" font-size="22" text-anchor="middle" fill="#111">форма запроса</text>
+<rect x="665" y="745" width="300" height="800" rx="18" fill="white" stroke="#111" stroke-width="2.5"/>
+<text x="815" y="790" font-family="Arial, sans-serif" font-size="25" text-anchor="middle" fill="#111">query_handler (POST)</text>
+<path d="M110 835 H665" fill="none" stroke="#111" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="385" y="781" font-family="Arial, sans-serif" font-size="23" text-anchor="middle" fill="#111">город</text>
+<text x="1255" y="810" font-family="Arial, sans-serif" font-size="22" text-anchor="middle" fill="#111">Передача управления</text>
+<text x="1255" y="840" font-family="Arial, sans-serif" font-size="22" text-anchor="middle" fill="#111">декоратору group_required</text>
+<path d="M965 860 H1545" fill="none" stroke="#111" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="1255" y="895" font-family="Arial, sans-serif" font-size="22" text-anchor="middle" fill="#111">Управление к декоратору вернулось</text>
+<text x="1255" y="925" font-family="Arial, sans-serif" font-size="22" text-anchor="middle" fill="#111">доступ разрешён</text>
+<path d="M1545 947 H965" fill="none" stroke="#111" stroke-width="2.5" marker-end="url(#arrow)" stroke-dasharray="9 8"/>
+<rect x="1690" y="1025" width="250" height="490" rx="18" fill="white" stroke="#111" stroke-width="2.5"/>
+<text x="1815" y="1070" font-family="Arial, sans-serif" font-size="27" text-anchor="middle" fill="#111">model_route</text>
+<path d="M965 1070 H1690" fill="none" stroke="#111" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="1327.5" y="1025" font-family="Arial, sans-serif" font-size="22" text-anchor="middle" fill="#111">provider, город</text>
+<rect x="2130" y="1130" width="240" height="110" rx="18" fill="white" stroke="#111" stroke-width="2.5"/>
+<text x="2250.0" y="1176.84" font-family="Arial, sans-serif" font-size="26" text-anchor="middle" fill="#111">SQLProvider</text>
+<text x="2250.0" y="1210.84" font-family="Arial, sans-serif" font-size="26" text-anchor="middle" fill="#111">get()</text>
+<path d="M1940 1170 H2130" fill="none" stroke="#111" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="2035" y="1140" font-family="Arial, sans-serif" font-size="21" text-anchor="middle" fill="#111">suppliers.sql</text>
+<path d="M2130 1220 H1940" fill="none" stroke="#111" stroke-width="2.5" marker-end="url(#arrow)" stroke-dasharray="9 8"/>
+<text x="2035" y="1260" font-family="Arial, sans-serif" font-size="22" text-anchor="middle" fill="#111">SQL</text>
+<rect x="2130" y="1320" width="240" height="105" rx="18" fill="white" stroke="#111" stroke-width="2.5"/>
+<text x="2250.0" y="1381.34" font-family="Arial, sans-serif" font-size="26" text-anchor="middle" fill="#111">select_list</text>
+<path d="M1940 1360 H2130" fill="none" stroke="#111" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="2035" y="1325" font-family="Arial, sans-serif" font-size="21" text-anchor="middle" fill="#111">SQL, город</text>
+<rect x="2450" y="1320" width="210" height="105" rx="18" fill="white" stroke="#111" stroke-width="2.5"/>
+<text x="2555.0" y="1364.66" font-family="Arial, sans-serif" font-size="24" text-anchor="middle" fill="#111">DBContext</text>
+<text x="2555.0" y="1396.66" font-family="Arial, sans-serif" font-size="24" text-anchor="middle" fill="#111">Manager</text>
+<path d="M2370 1360 H2450" fill="none" stroke="#111" stroke-width="2.5" marker-end="url(#arrow)"/>
+<path d="M2450 1410 H2370" fill="none" stroke="#111" stroke-width="2.5" marker-end="url(#arrow)" stroke-dasharray="9 8"/>
+<path d="M2130 1410 H1940" fill="none" stroke="#111" stroke-width="2.5" marker-end="url(#arrow)" stroke-dasharray="9 8"/>
+<text x="2035" y="1450" font-family="Arial, sans-serif" font-size="22" text-anchor="middle" fill="#111">строки</text>
+<path d="M1690 1490 H965" fill="none" stroke="#111" stroke-width="2.5" marker-end="url(#arrow)" stroke-dasharray="9 8"/>
+<text x="1327.5" y="1525" font-family="Arial, sans-serif" font-size="22" text-anchor="middle" fill="#111">ResultInfo</text>
+<rect x="280" y="1620" width="320" height="110" rx="18" fill="white" stroke="#111" stroke-width="2.5"/>
+<text x="440.0" y="1667.0" font-family="Arial, sans-serif" font-size="25" text-anchor="middle" fill="#111">query_result.html</text>
+<text x="440.0" y="1700.0" font-family="Arial, sans-serif" font-size="25" text-anchor="middle" fill="#111">rows</text>
+<path d="M815 1545 V1675.0 H600" fill="none" stroke="#111" stroke-width="2.5" marker-end="url(#arrow)"/>
+<path d="M280 1675.0 H110" fill="none" stroke="#111" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="133" y="1768" font-family="Arial, sans-serif" font-size="22" text-anchor="middle" fill="#111">результат</text>
+<text x="1350" y="1850" font-family="Arial, sans-serif" font-size="27" text-anchor="middle" fill="#111">Неверные параметры</text>
+<rect x="665" y="1890" width="300" height="80" rx="18" fill="white" stroke="#111" stroke-width="2.5"/>
+<text x="815.0" y="1938.84" font-family="Arial, sans-serif" font-size="26" text-anchor="middle" fill="#111">query_handler</text>
+<rect x="1690" y="1890" width="250" height="80" rx="18" fill="white" stroke="#111" stroke-width="2.5"/>
+<text x="1815.0" y="1938.5" font-family="Arial, sans-serif" font-size="25" text-anchor="middle" fill="#111">model_route</text>
+<path d="M1690 1930 H965" fill="none" stroke="#111" stroke-width="2.5" marker-end="url(#arrow)" stroke-dasharray="9 8"/>
+<text x="1327.5" y="1965" font-family="Arial, sans-serif" font-size="22" text-anchor="middle" fill="#111">ошибка 400</text>
+<rect x="280" y="2005" width="320" height="110" rx="18" fill="white" stroke="#111" stroke-width="2.5"/>
+<text x="440.0" y="2052.0" font-family="Arial, sans-serif" font-size="25" text-anchor="middle" fill="#111">suppliers.html</text>
+<text x="440.0" y="2085.0" font-family="Arial, sans-serif" font-size="25" text-anchor="middle" fill="#111">error, values</text>
+<path d="M815 1970 V2060.0 H600" fill="none" stroke="#111" stroke-width="2.5" marker-end="url(#arrow)"/>
+<path d="M280 2060.0 H110" fill="none" stroke="#111" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="133" y="2153" font-family="Arial, sans-serif" font-size="22" text-anchor="middle" fill="#111">HTTP 400</text>
+<text x="1350" y="2170" font-family="Arial, sans-serif" font-size="27" text-anchor="middle" fill="#111">Ошибка БД</text>
+<rect x="665" y="2210" width="300" height="80" rx="18" fill="white" stroke="#111" stroke-width="2.5"/>
+<text x="815.0" y="2258.84" font-family="Arial, sans-serif" font-size="26" text-anchor="middle" fill="#111">query_handler</text>
+<rect x="1690" y="2210" width="250" height="80" rx="18" fill="white" stroke="#111" stroke-width="2.5"/>
+<text x="1815.0" y="2258.5" font-family="Arial, sans-serif" font-size="25" text-anchor="middle" fill="#111">model_route</text>
+<path d="M1690 2250 H965" fill="none" stroke="#111" stroke-width="2.5" marker-end="url(#arrow)" stroke-dasharray="9 8"/>
+<text x="1327.5" y="2285" font-family="Arial, sans-serif" font-size="22" text-anchor="middle" fill="#111">ошибка 503</text>
+<rect x="280" y="2325" width="320" height="110" rx="18" fill="white" stroke="#111" stroke-width="2.5"/>
+<text x="440.0" y="2372.0" font-family="Arial, sans-serif" font-size="25" text-anchor="middle" fill="#111">suppliers.html</text>
+<text x="440.0" y="2405.0" font-family="Arial, sans-serif" font-size="25" text-anchor="middle" fill="#111">error, values</text>
+<path d="M815 2290 V2380.0 H600" fill="none" stroke="#111" stroke-width="2.5" marker-end="url(#arrow)"/>
+<path d="M280 2380.0 H110" fill="none" stroke="#111" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="133" y="2473" font-family="Arial, sans-serif" font-size="22" text-anchor="middle" fill="#111">HTTP 503</text>
+<text x="1350" y="2490" font-family="Arial, sans-serif" font-size="27" text-anchor="middle" fill="#111">Нет авторизации / нет доступа</text>
+<rect x="665" y="2535" width="300" height="190" rx="18" fill="white" stroke="#111" stroke-width="2.5"/>
+<text x="815.0" y="2638.5" font-family="Arial, sans-serif" font-size="25" text-anchor="middle" fill="#111">query_handler</text>
+<path d="M110 2575 H665" fill="none" stroke="#111" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="385" y="2521" font-family="Arial, sans-serif" font-size="23" text-anchor="middle" fill="#111">открыть запрос</text>
+<text x="1255" y="2550" font-family="Arial, sans-serif" font-size="22" text-anchor="middle" fill="#111">Передача управления</text>
+<text x="1255" y="2580" font-family="Arial, sans-serif" font-size="22" text-anchor="middle" fill="#111">декоратору group_required</text>
+<path d="M965 2600 H1545" fill="none" stroke="#111" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="1255" y="2635" font-family="Arial, sans-serif" font-size="22" text-anchor="middle" fill="#111">Управление к декоратору вернулось</text>
+<text x="1255" y="2665" font-family="Arial, sans-serif" font-size="22" text-anchor="middle" fill="#111">нет сессии / нет права</text>
+<path d="M1545 2687 H965" fill="none" stroke="#111" stroke-width="2.5" marker-end="url(#arrow)" stroke-dasharray="9 8"/>
+<rect x="280" y="2795" width="320" height="78" rx="18" fill="white" stroke="#111" stroke-width="2.5"/>
+<text x="440.0" y="2842.5" font-family="Arial, sans-serif" font-size="25" text-anchor="middle" fill="#111">login.html</text>
+<path d="M815 2725 V2834.0 H600" fill="none" stroke="#111" stroke-width="2.5" marker-end="url(#arrow)"/>
+<path d="M280 2834.0 H110" fill="none" stroke="#111" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="133" y="2911" font-family="Arial, sans-serif" font-size="22" text-anchor="middle" fill="#111">форма входа</text>
+<rect x="280" y="2950" width="320" height="78" rx="18" fill="white" stroke="#111" stroke-width="2.5"/>
+<text x="440.0" y="2997.5" font-family="Arial, sans-serif" font-size="25" text-anchor="middle" fill="#111">403.html</text>
+<path d="M815 2725 V2989.0 H600" fill="none" stroke="#111" stroke-width="2.5" marker-end="url(#arrow)"/>
+<path d="M280 2989.0 H110" fill="none" stroke="#111" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="133" y="3066" font-family="Arial, sans-serif" font-size="22" text-anchor="middle" fill="#111">Доступ запрещён</text>
 </svg>
