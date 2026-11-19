@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Заказ оформлен - ФрешМаркет</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #e8f5e8 0%, #f0f7ff 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            align-items: center;
+        }
+
+        .success-card {
+            background: white;
+            border-radius: 25px;
+            box-shadow: 0 20px 40px rgba(76, 175, 80, 0.15);
+            border: 1px solid #e8f5e9;
+            overflow: hidden;
+        }
+
+        .success-header {
+            background: linear-gradient(135deg, #4caf50, #2e7d32);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .success-body {
+            padding: 40px;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #4caf50, #45a049);
+            border: none;
+            border-radius: 12px;
+            padding: 12px 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.3);
+        }
+
+        .btn-outline-secondary {
+            border: 2px solid #78909c;
+            border-radius: 12px;
+            color: #78909c;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-secondary:hover {
+            background: #78909c;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .order-number {
+            background: linear-gradient(135deg, #e8f5e9, #f1f8e9);
+            border-radius: 15px;
+            padding: 15px;
+            border: 2px dashed #4caf50;
+            font-size: 1.2em;
+            font-weight: 700;
+            color: #2e7d32;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="success-card">
+                    <div class="success-header">
+                        <h1 class="display-1">🎉</h1>
+                        <h2 class="mb-0">Заказ успешно оформлен!</h2>
+                    </div>
+                    <div class="success-body text-center">
+                        <p class="lead">Спасибо за ваш заказ!</p>
+                        <div class="order-number my-4">
+                            Номер вашего заказа: <strong>#{{ order_id }}</strong>
+                        </div>
+                        <p class="text-muted mb-4">
+                            🚚 Мы уже начали собирать ваши свежие продукты!
+                        </p>
+                        <div class="mt-4">
+                            <a href="{{ url_for('main_menu') }}" class="btn btn-success me-3">
+                                🏠 На главную
+                            </a>
+                            <a href="{{ url_for('basket.basket') }}" class="btn btn-outline-secondary">
+                                🛒 Новый заказ
+                            </a>
+                        </div>
+                        <div class="mt-4 pt-3 border-top">
+                            <small class="text-muted">
+                                🍎 Свежесть гарантирована! 🥦
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

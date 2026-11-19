@@ -1,0 +1,10 @@
+{
+  "admin": [
+    "query_bp"
+  ],
+  "cashier": [
+  ],
+  "financier": [
+    "query_bp"
+  ]
+}

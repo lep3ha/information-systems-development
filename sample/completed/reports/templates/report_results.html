@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Детализированный отчет по продажам</title>
+    <meta charset="UTF-8">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            background-color: #f8f9fa;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            background-color: white;
+            border: 1px solid #dee2e6;
+            padding: 30px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #212529;
+            margin-bottom: 20px;
+            font-size: 24px;
+            font-weight: 600;
+            text-align: center;
+        }
+        .report-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+        }
+        .report-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #495057;
+        }
+        .stat-label {
+            font-size: 14px;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #e9ecef;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        .category-header {
+            background-color: #495057 !important;
+            color: white;
+            font-weight: bold;
+        }
+        .no-data {
+            color: #6c757d;
+            text-align: center;
+            margin: 40px 0;
+            font-style: italic;
+            font-size: 16px;
+        }
+        .back-link {
+            display: inline-block;
+            color: #6c757d;
+            text-decoration: none;
+            text-align: center;
+            font-size: 14px;
+            margin-top: 10px;
+            padding: 8px 16px;
+            background-color: #e9ecef;
+            margin-right: 10px;
+            border-radius: 4px;
+        }
+        .back-link:hover {
+            color: #495057;
+            background-color: #dee2e6;
+        }
+        .total-row {
+            background-color: #d4edda !important;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="report-header">
+            <h1>📊 Детализированный отчет по продажам</h1>
+            <p style="font-size: 18px; margin-top: 10px;"><strong>Период:</strong> {{ month }}/{{ year }}</p>
+        </div>
+
+        {% if report_data and report_data|length > 0 %}
+            {% set total_amount = [] %}
+            {% set total_value = [] %}
+
+            <!-- Статистика -->
+            <div class="report-stats">
+                <div class="stat-card">
+                    <div class="stat-value">{{ report_data|length }}</div>
+                    <div class="stat-label">Товаров продано</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">
+                        {% for item in report_data %}
+                            {% if total_amount.append(item.total_quantity) %}{% endif %}
+                            {% if total_value.append(item.total_value) %}{% endif %}
+                        {% endfor %}
+                        {{ total_amount | sum }}
+                    </div>
+                    <div class="stat-label">Общее количество</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">{{ "%.2f"|format(total_value | sum) }} ₽</div>
+                    <div class="stat-label">Общая стоимость</div>
+                </div>
+            </div>
+
+            <!-- Детальная таблица -->
+            <table>
+                <thead>
+                    <tr>
+                        <th>Категория</th>
+                        <th>Наименование товара</th>
+                        <th>Количество</th>
+                        <th>Стоимость</th>
+                        <th>ID отчета</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% set current_category = [] %}
+                    {% for item in report_data %}
+                        {% if item.category_name != current_category %}
+                            {% if current_category %}{% endif %}
+                            <tr class="category-header">
+                                <td colspan="5">{{ item.category_name }}</td>
+                            </tr>
+                            {% set current_category = item.category_name %}
+                        {% endif %}
+                        <tr>
+                            <td>{{ item.category_name }}</td>
+                            <td>{{ item.product_name }}</td>
+                            <td>{{ item.p_amount }}</td>
+                            <td>{{ "%.2f"|format(item.total_value) }} ₽</td>
+                            <td>{{ item.report_id }}</td>
+                        </tr>
+                    {% endfor %}
+                    <!-- Итоговая строка -->
+                    <tr class="total-row">
+                        <td colspan="2"><strong>ИТОГО:</strong></td>
+                        <td><strong>{{ total_amount | sum }}</strong></td>
+                        <td><strong>{{ "%.2f"|format(total_value | sum) }} ₽</strong></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        {% else %}
+            <p class="no-data">Нет данных о продажах за указанный период</p>
+        {% endif %}
+
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="{{ url_for('reports.date_report') }}" class="back-link">← Назад к форме отчета</a>
+            <a href="{{ url_for('reports.reports_menu') }}" class="back-link">← Меню отчетов</a>
+            <a href="{{ url_for('main_menu') }}" class="back-link">← Главное меню</a>
+        </div>
+    </div>
+</body>
+</html>

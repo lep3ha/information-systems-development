@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Отчет по дате</title>
+    <meta charset="UTF-8">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            background-color: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background-color: white;
+            border: 1px solid #dee2e6;
+            padding: 30px;
+        }
+        h1 {
+            color: #212529;
+            margin-bottom: 20px;
+            font-size: 22px;
+            font-weight: 600;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #495057;
+            font-weight: 500;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ced4da;
+            font-size: 14px;
+            background-color: white;
+        }
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #6c757d;
+        }
+        .flash {
+            margin-bottom: 20px;
+            padding: 15px;
+            text-align: center;
+        }
+        .flash.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .flash.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            font-size: 14px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+        }
+        .btn:hover {
+            background-color: #5a6268;
+        }
+        .btn.create {
+            background-color: #28a745;
+        }
+        .btn.create:hover {
+            background-color: #218838;
+        }
+        .btn.view {
+            background-color: #17a2b8;
+        }
+        .btn.view:hover {
+            background-color: #138496;
+        }
+        .back-link {
+            display: block;
+            color: #6c757d;
+            text-decoration: none;
+            text-align: center;
+            font-size: 14px;
+            margin-top: 15px;
+            padding: 8px 16px;
+            background-color: #e9ecef;
+        }
+        .back-link:hover {
+            color: #495057;
+            background-color: #dee2e6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Отчет по дате</h1>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST">
+            <div class="form-group">
+                <label for="month">Месяц:</label>
+                <input type="number" id="month" name="month" min="1" max="12" required>
+            </div>
+            <div class="form-group">
+                <label for="year">Год:</label>
+                <input type="number" id="year" name="year" min="2020" max="2030" required>
+            </div>
+
+            <div class="button-group">
+                <button type="submit" name="action" value="create" class="btn create">Создать отчет</button>
+                <button type="submit" name="action" value="view" class="btn view">Просмотреть отчет</button>
+            </div>
+        </form>
+
+        <a href="{{ url_for('reports.reports_menu') }}" class="back-link">← Назад к выбору отчетов</a>
+        <a href="{{ url_for('main_menu') }}" class="back-link">← Главное меню</a>
+    </div>
+</body>
+</html>

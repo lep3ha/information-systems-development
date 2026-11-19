@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Просмотр отчетов</title>
+    <meta charset="UTF-8">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            background-color: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background-color: white;
+            border: 1px solid #dee2e6;
+            padding: 30px;
+        }
+        h1 {
+            color: #212529;
+            margin-bottom: 20px;
+            font-size: 22px;
+            font-weight: 600;
+            text-align: center;
+        }
+        .reports-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 20px 0;
+        }
+        .report-item {
+            padding: 15px;
+            border: 1px solid #dee2e6;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .report-date {
+            font-weight: 500;
+        }
+        .btn {
+            display: inline-block;
+            padding: 6px 12px;
+            background-color: #6c757d;
+            color: white;
+            text-decoration: none;
+            font-size: 12px;
+        }
+        .btn:hover {
+            background-color: #5a6268;
+        }
+        .no-data {
+            color: #6c757d;
+            text-align: center;
+            margin: 20px 0;
+            font-style: italic;
+        }
+        .back-link {
+            display: inline-block;
+            color: #6c757d;
+            text-decoration: none;
+            text-align: center;
+            font-size: 14px;
+            margin-top: 10px;
+            padding: 8px 16px;
+            background-color: #e9ecef;
+            margin-right: 10px;
+        }
+        .back-link:hover {
+            color: #495057;
+            background-color: #dee2e6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Созданные отчеты</h1>
+
+        {% if reports and reports|length > 0 %}
+            <ul class="reports-list">
+                {% for report in reports %}
+                    <li class="report-item">
+                        <span class="report-date">Отчет за {{ report.report_month }}/{{ report.report_year }}</span>
+                        <a href="{{ url_for('reports_bp.date_report') }}?month={{ report.report_month }}&year={{ report.report_year }}" class="btn">
+                            Просмотреть
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="no-data">Нет созданных отчетов</p>
+        {% endif %}
+
+        <div style="text-align: center;">
+            <a href="{{ url_for('reports.reports_menu') }}" class="back-link">← Назад к выбору отчетов</a>
+            <a href="{{ url_for('main_menu') }}" class="back-link">← Главное меню</a>
+        </div>
+    </div>
+</body>
+</html>

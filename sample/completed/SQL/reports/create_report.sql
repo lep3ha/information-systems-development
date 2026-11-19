@@ -1,0 +1,1 @@
+CALL create_monthly_report(%s, %s);

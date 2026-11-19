@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Работа с отчетами</title>
+    <meta charset="UTF-8">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            background-color: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background-color: white;
+            border: 1px solid #dee2e6;
+            padding: 30px;
+        }
+        .user-info {
+            margin-bottom: 30px;
+            padding: 15px;
+            background-color: #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .user-info a {
+            color: #495057;
+            text-decoration: none;
+            padding: 6px 12px;
+            background-color: white;
+            border: 1px solid #ced4da;
+        }
+        .user-info a:hover {
+            background-color: #f8f9fa;
+        }
+        h1 {
+            color: #212529;
+            margin-bottom: 30px;
+            font-size: 22px;
+            font-weight: 600;
+            text-align: center;
+        }
+        .menu {
+            list-style-type: none;
+            padding: 0;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .menu-item {
+            background: white;
+            padding: 0;
+            text-align: center;
+            border: 1px solid #dee2e6;
+        }
+        .menu-item a {
+            display: block;
+            padding: 20px;
+            text-decoration: none;
+            color: white;
+            font-weight: 500;
+            font-size: 16px;
+            background-color: #6c757d;
+        }
+        .menu-item a:hover {
+            background-color: #5a6268;
+        }
+        .back-link {
+            display: block;
+            color: #6c757d;
+            text-decoration: none;
+            text-align: center;
+            font-size: 14px;
+            margin-top: 10px;
+            padding: 8px 16px;
+            background-color: #e9ecef;
+        }
+        .back-link:hover {
+            color: #495057;
+            background-color: #dee2e6;
+        }
+        .messages {
+            margin-top: 20px;
+            padding: 15px;
+        }
+        .messages.success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .messages.error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="user-info">
+            <div>
+                <strong>Пользователь:</strong> {{ session.username }}
+                <strong>Группа:</strong> {{ session.user_group }}
+            </div>
+            <a href="{{ url_for('main_menu') }}">Назад</a>
+        </div>
+
+        <h1>Выбор вида отчета</h1>
+
+        <ul class="menu">
+            <!-- Отчет по дате -->
+            <li class="menu-item">
+                <a href="{{ url_for('reports.date_report') }}">
+                    📅 Отчет по дате
+                </a>
+            </li>
+        </ul>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="messages success">
+                    {% for message in messages %}
+                        <p>{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <a href="{{ url_for('main_menu') }}" class="back-link">Назад в главное меню</a>
+    </div>
+</body>
+</html>

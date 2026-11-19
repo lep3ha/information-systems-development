@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Главное меню - ФрешМаркет</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #e8f5e8 0%, #f0f7ff 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(76, 175, 80, 0.1);
+            border: 1px solid #e0f2e0;
+        }
+        .user-info {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #4caf50, #45a049);
+            border-radius: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.2);
+        }
+        .user-info a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .user-info a:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        h1 {
+            color: #2e7d32;
+            margin-bottom: 30px;
+            font-size: 24px;
+            font-weight: 700;
+            text-align: center;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .menu {
+            list-style-type: none;
+            padding: 0;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .menu-item {
+            background: white;
+            padding: 0;
+            text-align: center;
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+        .menu-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        .menu-item a {
+            display: block;
+            padding: 25px;
+            text-decoration: none;
+            color: white;
+            font-weight: 600;
+            font-size: 18px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        .menu-item.queries a {
+            background: linear-gradient(135deg, #ff9800, #f57c00);
+        }
+        .menu-item.reports a {
+            background: linear-gradient(135deg, #2196f3, #1976d2);
+        }
+        .menu-item.basket a {
+            background: linear-gradient(135deg, #4caf50, #2e7d32);
+        }
+        .menu-item a:hover {
+            background: linear-gradient(135deg, #66bb6a, #43a047);
+            letter-spacing: 0.5px;
+        }
+        .messages {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 15px;
+        }
+        .messages.success {
+            background: linear-gradient(135deg, #c8e6c9, #a5d6a7);
+            border: 2px solid #4caf50;
+            color: #1b5e20;
+        }
+        .messages.error {
+            background: linear-gradient(135deg, #ffcdd2, #ef9a9a);
+            border: 2px solid #f44336;
+            color: #b71c1c;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="user-info">
+            <div>
+                <strong>Пользователь:</strong> {{ session.username }}
+                <strong>Группа:</strong> {{ session.user_group }}
+            </div>
+            <a href="{{ url_for('auth.logout') }}">Выйти</a>
+        </div>
+
+        <h1>🍎 Добро пожаловать в СуперМаркет!</h1>
+
+        <ul class="menu">
+            <!-- Запросы -->
+            <li class="menu-item queries">
+                <a href="{{ url_for('queries.query_handler') }}">
+                    Работа с запросами
+                </a>
+            </li>
+
+            <!-- Отчеты -->
+            <li class="menu-item reports">
+                <a href="{{ url_for('reports.reports_menu') }}">
+                    Работа с отчетами
+                </a>
+            </li>
+            <!-- Корзина -->
+            <li class="menu-item basket">
+                <a href="{{ url_for('basket.basket') }}">
+                    Моя корзина
+                </a>
+            </li>
+        </ul>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="messages success">
+                    {% for message in messages %}
+                        <p>{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+    </div>
+</body>
+</html>

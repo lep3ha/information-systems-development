@@ -1,0 +1,21 @@
+{
+  "admin": [
+    "main_menu",
+    "queries.query_handler",
+    "reports.reports_menu",
+    "reports.create_report",
+    "reports.view_reports",
+    "reports.date_report"
+  ],
+  "manager": [
+    "main_menu",
+    "reports.reports_menu",
+    "reports.create_report",
+    "reports.view_reports",
+    "reports.report_details"
+  ],
+  "user": [
+    "main_menu",
+    "queries.query_handler"
+  ]
+}

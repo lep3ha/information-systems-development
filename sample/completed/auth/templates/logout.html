@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Выход - ФрешМаркет</title>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #e8f5e8 0%, #f0f7ff 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(76, 175, 80, 0.15);
+            text-align: center;
+            max-width: 450px;
+            border: 1px solid #e0f2e0;
+        }
+        h1 {
+            color: #2e7d32;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+        p {
+            color: #455a64;
+            margin-bottom: 20px;
+            line-height: 1.6;
+            font-size: 16px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #4caf50, #45a049);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 16px;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+            color: white;
+            text-decoration: none;
+        }
+        .icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <span class="icon">👋</span>
+        <h1>До свидания!</h1>
+        <p>Вы вышли из системы <strong>СуперМаркет</strong>.</p>
+        <p>Ждем вас снова за свежими продуктами!</p>
+        <p style="margin-top: 30px; font-style: italic; color: #78909c;">
+            🍎 Свежесть и качество каждый день! 🥦
+        </p>
+        <a href="{{ url_for('auth.login') }}" class="btn" style="margin-top: 20px;">
+            🔄 Войти снова
+        </a>
+    </div>
+</body>
+</html>
